@@ -67,28 +67,6 @@ class PhotoGet: ObservableObject {
                     self.photos = fetchedPhotos
                 }
                 
-                
-                /*
-                 
-                 let manager = PHImageManager.default()
-                 
-                 let options = PHImageRequestOptions()
-                 options.isSynchronous = false
-                 options.deliveryMode = .opportunistic
-                 
-                 manager.requestImage(
-                 for: asset,
-                 targetSize: CGSize(width: 200, height: 200),
-                 contentMode: .aspectFill,
-                 options: options
-                 ) { image, info in
-                 if let image = image {
-                 // UIImage を使う
-                 }
-                 }
-                 */
-                
-                
             case .denied:
                 print("アクセス不可(denied)")
             case .restricted:

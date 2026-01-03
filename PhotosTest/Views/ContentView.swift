@@ -23,7 +23,7 @@ struct ContentView: View {
                     if let asset = entry.asset {
                         PhotoThumbnail(asset: asset)
                     }
-                    Text("creationDate: \(entry.creationDate ?? Date())")
+                    Text("撮影日: \(entry.photoDt)")
 
                 }
             }
