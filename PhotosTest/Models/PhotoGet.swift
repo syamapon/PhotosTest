@@ -12,20 +12,13 @@ import Photos
 class PhotoGet: ObservableObject {
     
     @Published var photos: [Photo] = []
-        
-    /*
-    init(photos: [Photo]) {
-        self.photos = photos
-    }
-     */
-    
+           
     func setPhotos() {
         
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
             switch status {
             case .authorized, .limited:
-                print("アクセス許可あり")
-                
+               
                 // アルバム取得
                 let fetchOptions = PHFetchOptions()
                 fetchOptions.predicate = NSPredicate(format: "title == %@", "植物")
