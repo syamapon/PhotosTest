@@ -10,8 +10,9 @@ import Photos
 
 struct ContentView: View {
     
-    @StateObject private var photoGet = PhotoGet()
+    var photoGet : PhotoGet
     @Binding var selection: Photo.ID?
+    
     let selectedSidebarItem: SidebarItem?
     
     private var photos: [Photo] {

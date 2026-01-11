@@ -10,6 +10,8 @@ import SwiftUI
 @main
 struct PhotosTestApp: App {
     
+    @StateObject private var photoGet = PhotoGet()
+    
     @State var selection: Photo.ID?
     @State private var selectedSidebarItem: SidebarItem? = nil
     
@@ -19,7 +21,8 @@ struct PhotosTestApp: App {
                 SidebarView(selection: $selectedSidebarItem)
             } content: {
                 //ContentView(selection: $selection)
-                ContentView(selection: $selection, selectedSidebarItem: selectedSidebarItem)
+                //ContentView(selection: $selection, selectedSidebarItem: selectedSidebarItem)
+                ContentView(photoGet: photoGet, selection: $selection, selectedSidebarItem: selectedSidebarItem)
             } detail :{
                 
             }
