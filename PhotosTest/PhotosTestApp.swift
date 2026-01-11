@@ -9,9 +9,22 @@ import SwiftUI
 
 @main
 struct PhotosTestApp: App {
+    
+    @State var selection: Photo.ID?
+    @State private var selectedSidebarItem: SidebarItem? = nil
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationSplitView {
+                SidebarView(selection: $selectedSidebarItem)
+            } content: {
+                //ContentView(selection: $selection)
+                ContentView(selection: $selection, selectedSidebarItem: selectedSidebarItem)
+            } detail :{
+                
+            }
+            
+            
         }
     }
 }

@@ -9,10 +9,15 @@ import SwiftUI
 import Combine
 import Photos
 
-class PhotoGet: ObservableObject {
+class PhotoGet :ObservableObject {
     
     @Published var photos: [Photo] = []
-           
+    
+    init()
+    {
+        setPhotos()
+    }
+    
     func setPhotos() {
         
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
@@ -32,14 +37,12 @@ class PhotoGet: ObservableObject {
                 }
                 
                 // アルバムに登録されたイメージの取得
-                let fetchOptions2 = PHFetchOptions()
-                fetchOptions2.sortDescriptors = [
+                let fetchOptionsByAlbum = PHFetchOptions()
+                fetchOptionsByAlbum.sortDescriptors = [
                     NSSortDescriptor(key: "creationDate", ascending: false)
                 ]
                 
-                let assets = PHAsset.fetchAssets(in: album, options: fetchOptions2)
-                
-                //print(assets.count)
+                let assets = PHAsset.fetchAssets(in: album, options: fetchOptionsByAlbum)
                 
                 var fetchedPhotos: [Photo] = []
                 
