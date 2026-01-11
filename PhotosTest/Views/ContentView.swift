@@ -20,16 +20,17 @@ struct ContentView: View {
         case .all:
             return photoGet.photos
         case .recents:
-            let l_photos = photoGet.photos.filter({photo in
-                if photo.creationDate == nil {
-                    return false
+            print("recents")
+            return photoGet.photos.filter({photo in
+                if let creationDate = photo.creationDate {
+                    if let todayBefore6Month = Calendar.current.date(byAdding: .month, value: -6, to: Date()) {
+                        return creationDate > todayBefore6Month
+                    }
                 }
-                else {
-                    return photo.creationDate! > Calendar.current.date(byAdding: .month, value: -6, to: Date()) ?? Date()
-                }
+                return false
             })
-            return l_photos
         case .favorites:
+            print("favorites")
             return photoGet.photos
         case nil:
             return photoGet.photos
