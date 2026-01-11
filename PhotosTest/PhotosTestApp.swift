@@ -12,7 +12,7 @@ struct PhotosTestApp: App {
     
     @StateObject private var photoGet = PhotoGet()
     
-    @State var selection: Photo.ID?
+    @State var selectPhotoID: Photo.ID?
     @State private var selectedSidebarItem: SidebarItem? = nil
     
     var body: some Scene {
@@ -22,9 +22,10 @@ struct PhotosTestApp: App {
             } content: {
                 //ContentView(selection: $selection)
                 //ContentView(selection: $selection, selectedSidebarItem: selectedSidebarItem)
-                ContentView(photoGet: photoGet, selection: $selection, selectedSidebarItem: selectedSidebarItem)
+                ContentView(photoGet: photoGet, selection: $selectPhotoID, selectedSidebarItem: selectedSidebarItem)
             } detail :{
-                
+                //DetailView(selection: selectPhotoID)
+                DetailView(photoGet: self.photoGet, selection: self.selectPhotoID)
             }
             
             

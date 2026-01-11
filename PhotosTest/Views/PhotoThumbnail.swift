@@ -27,7 +27,6 @@ struct PhotoThumbnail: View {
         .onAppear {
             loadImage()
         }
-
     }
     
     func loadImage() {
