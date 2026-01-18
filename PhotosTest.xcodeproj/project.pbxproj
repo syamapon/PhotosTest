@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D17577B72F1381F600DB8BCC /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = D17577B62F1381F600DB8BCC /* SQLite */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		D17EB7C72F06A60E00466B8B /* PhotosTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotosTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D19141292F071C5D0010D28D /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = SDKROOT; };
@@ -24,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D17577B72F1381F600DB8BCC /* SQLite in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +80,7 @@
 			);
 			name = PhotosTest;
 			packageProductDependencies = (
+				D17577B62F1381F600DB8BCC /* SQLite */,
 			);
 			productName = PhotosTest;
 			productReference = D17EB7C72F06A60E00466B8B /* PhotosTest.app */;
@@ -104,6 +110,9 @@
 			);
 			mainGroup = D17EB7BE2F06A60E00466B8B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D17577B52F1381F600DB8BCC /* XCRemoteSwiftPackageReference "SQLite" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D17EB7C82F06A60E00466B8B /* Products */;
 			projectDirPath = "";
@@ -385,6 +394,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D17577B52F1381F600DB8BCC /* XCRemoteSwiftPackageReference "SQLite" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stephencelis/SQLite.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.15.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D17577B62F1381F600DB8BCC /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D17577B52F1381F600DB8BCC /* XCRemoteSwiftPackageReference "SQLite" */;
+			productName = SQLite;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D17EB7BF2F06A60E00466B8B /* Project object */;
 }

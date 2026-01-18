@@ -13,6 +13,8 @@ struct DetailView: View {
     var selection: Photo.ID?
     var photoGet : PhotoGet
     
+    @State private var inputName: String = ""
+    
     init(photoGet:PhotoGet, selection: Photo.ID? = nil) {
         self.photoGet = photoGet
         self.selection = selection
@@ -21,22 +23,38 @@ struct DetailView: View {
     var body: some View {
         VStack {
             if let photo = self.photo {
-                Text(photo.creationDate!.description)
                 
-                if let getNsImage = getImage(asset: photo.asset)
-                {
+                Text(photo.title ?? "Untitled")
+                TextField("名前", text: $inputName)
+                    .padding(10)
+                Button("保存") {
+                    do {
+                        var mutablePhoto = photo
+                        mutablePhoto.title = inputName
+                        try mutablePhoto.storePhoto()
+                    } catch {
+                        // TODO: Present a user-facing error if needed
+                        print("Failed to store photo: \(error)")
+                    }
+                }
+                if let creationDate = photo.creationDate {
+                    Text(creationDate.description)
+                }
+                if let getNsImage = getImage(asset: photo.asset) {
                     Image(nsImage: getNsImage)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 600, height: 600)
                 }
-                
+            } else {
+                Text("No Selection")
             }
-            
-            Text(selection?.uuidString ?? "No Selection")
-            
         }
-
+        .onAppear {
+            if let title = self.photo?.title {
+                self.inputName = title
+            }
+        }
     }
     
     private var photo: Photo? {

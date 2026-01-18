@@ -54,13 +54,22 @@ class PhotoGet :ObservableObject {
                     print("location: \(locationDescription)")
                     
                     
+                    var _photoTitle: String = ""
+                    
+                    
                     // 画像オブジェクトを作成
-                    var _photo = Photo(title: "", asset: asset)
+                    var _photo = Photo(title: _photoTitle, asset: asset)
                     _photo.creationDate = asset.creationDate
                     //self.photos.append(contentsOf: [_photo])
                     //self.photos.append(_photo)
                     //_self.photos.append(_photo)
-                    
+                    do {
+                        try _photo.setData()
+                    }
+                    catch {
+                        print ("ERROR")
+                    }
+
 
                     fetchedPhotos.append(_photo)
                 }

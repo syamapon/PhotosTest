@@ -18,5 +18,21 @@
             </PersistentString>
          </PersistentStrings>
       </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in DetailView.body.getter:DetailView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "nCnt">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in DetailView.body.getter:DetailView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "inputName">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
    </ContextStates>
 </VariablesViewState>
