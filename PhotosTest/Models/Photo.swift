@@ -11,6 +11,8 @@ import Photos
 import SQLite
 
 struct Photo: Identifiable {
+    
+    // ID
     var id: String {
         guard let creationDate else { return "Empty" }
         let formatter = DateFormatter()
@@ -47,6 +49,7 @@ struct Photo: Identifiable {
 
     }
     
+    // Dataの保存先のパスをURLで取得
     func databaseURL() throws -> URL {
         let fm = FileManager.default
         let appSupport = try fm.url(
@@ -69,35 +72,22 @@ struct Photo: Identifiable {
         let dbPath = try databaseURL().path
         let db = try Connection(dbPath)
         
-        //let db = try Connection("/Users/shinichirou/tmp/plants.sqlite")
         let plants = Table("plants")
+        
         let id = Expression<String>("id")
         let createdAt = Expression<Date?>("createdAt")
         let title = Expression<String>("title")
         
-        try db.run(plants.create(ifNotExists: true) { t in
-            t.column(id, primaryKey: true)
-            t.column(createdAt)
-            t.column(title, unique: true)
-        })
-        
-        /*
-        guard let creationDate else { return }
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ja_JP")
-        formatter.dateFormat = "yyyyMMddHHmmss"
-        self.id = formatter.string(from: creationDate)
-        */
-        
-        let insert = plants.insert(id <- self.id, title <- self.title, createdAt <- self.creationDate)
-        
-        do {
+        // 更新
+        let target = plants.filter(id == self.id)
+        let updated = try db.run(target.update(title <- self.title))
+        if updated == 0 {
+            // 未登録であれば、追加する
+            let insert = plants.insert(id <- self.id, title <- self.title, createdAt <- self.creationDate)
             try db.run(insert)
-            print("Insert OK")
-        } catch {
-            print("Insert failed:", error)
-            throw error
         }
+        
+
         
         do {
             try self.setData()
