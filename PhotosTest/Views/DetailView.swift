@@ -10,13 +10,17 @@ import Photos
 
 struct DetailView: View {
     
-    var selection: Photo.ID?
-    var photoGet : PhotoGet
+    @Binding var selection: Photo.ID?
+    
+    @ObservedObject var photoGet : PhotoGet
+    
+    @Binding var selectPhoto : Photo?
     
     @State private var inputName: String = ""
         
     @State private var photo: Photo?
     
+    /*
     init(photoGet:PhotoGet, selection: Photo.ID? = nil) {
         self.photoGet = photoGet
         self.selection = selection
@@ -24,6 +28,7 @@ struct DetailView: View {
         _photo = State(initialValue: photoGet.getPhoto(selection))
         _inputName = State(initialValue: photoGet.getPhoto(selection)?.title ?? "")
     }
+     */
     
     var body: some View {
         VStack {
@@ -31,6 +36,23 @@ struct DetailView: View {
             //if (pphotoGet.getPhoto())
             
             //Text(photoGet.getPhoto()?.title)
+            
+            if var _selectPhoto = self.selectPhoto {
+                Text(_selectPhoto.title)
+                TextField("名前", text: $inputName)
+                Button("設定") {
+                    self.selectPhoto?.title = inputName
+                }
+                if let creationDate = _selectPhoto.creationDate {
+                    Text(creationDate.description)
+                }
+                if let getNsImage = getImage(asset: _selectPhoto.asset) {
+                    Image(nsImage: getNsImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 600, height: 600)
+                }
+            }
             
             if let photo = self.photo  {
 

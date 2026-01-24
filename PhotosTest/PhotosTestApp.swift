@@ -27,11 +27,13 @@ struct PhotosTestApp: App {
             } content: {
                 //ContentView(selection: $selection)
                 //ContentView(selection: $selection, selectedSidebarItem: selectedSidebarItem)
-                ContentView(photoGet: photoGet, selection: $selectPhotoID, selectedSidebarItem: selectedSidebarItem)
+                ContentView(photoGet: photoGet, selection: $selectPhotoID, selectedSidebarItem: selectedSidebarItem, selectPhoto: $selectPhoto)
             } detail :{
                 //DetailView(selection: selectPhotoID)
-                DetailView(photoGet: photoGet, selection: selectPhotoID)
+                //DetailView(photoGet: photoGet, selection: selectPhotoID, selectPhoto: $selectPhoto)
+                DetailView(selection: $selectPhotoID, photoGet: photoGet, selectPhoto: $selectPhoto)
             }
         }
     }
 }
+

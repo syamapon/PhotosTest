@@ -10,14 +10,21 @@ import Photos
 
 struct ContentView: View {
     
-    var photoGet : PhotoGet
+    @ObservedObject var photoGet : PhotoGet
     @Binding var selection: Photo.ID?
     
     // 左端で選択されている項目
     let selectedSidebarItem: SidebarItem?
     
+    @Binding var selectPhoto: Photo?
+    
     var body: some View {
         VStack {
+            List(photos, selection: $selectPhoto) { entry in
+                NavigationLink(value: entry) {
+                    Text(entry.title)
+                }
+            }
             List(photos, selection: $selection) { entry in
                 NavigationLink(value: entry.id) {
                     HStack {
@@ -48,8 +55,6 @@ struct ContentView: View {
              */
         }
         .padding()
-        .onAppear {
-        }
     }
         
     

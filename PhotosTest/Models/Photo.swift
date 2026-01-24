@@ -10,7 +10,7 @@ import Photos
 
 import SQLite
 
-struct Photo: Identifiable {
+struct Photo: Identifiable, Hashable {
     
     // ID
     var id: String {
@@ -35,6 +35,13 @@ struct Photo: Identifiable {
         return formatter.string(from: creationDate)
     }
     
+    static func == (lhs: Photo, rhs: Photo) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
     
     init(title: String, asset: PHAsset?) {
         self.title = title
@@ -143,7 +150,7 @@ struct Photo: Identifiable {
             self.title = plant[title]
         }
         
-        print("title: \(self.title ?? "nil")")
+        print("title: \(self.title)")
     }
     
     
