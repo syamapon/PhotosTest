@@ -18,6 +18,30 @@ class PhotoGet :ObservableObject {
         setPhotos()
     }
     
+    func getPhoto(_ sectionID: Photo.ID?) -> Photo? {
+        if let _selectionID = sectionID {
+            let photo = photos.first(where: { $0.id == _selectionID })
+            
+            if var p = photo {
+                do {
+                    try p.setData()
+                    //self.photo = p
+                } catch {
+                    print("setData error:", error)
+                }
+                return p
+            }
+            // self.inputName = self.photo?.title ?? ""
+        }
+        return nil
+    }
+    
+    func setTitle(_ id: Photo.ID?, setTitle title: String) {
+        if var _photo = getPhoto(id) {
+            _photo.title = title
+        }
+    }
+    
     func setPhotos() {
         
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in

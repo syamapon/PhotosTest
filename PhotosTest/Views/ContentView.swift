@@ -13,6 +13,7 @@ struct ContentView: View {
     var photoGet : PhotoGet
     @Binding var selection: Photo.ID?
     
+    // 左端で選択されている項目
     let selectedSidebarItem: SidebarItem?
     
     var body: some View {
@@ -23,8 +24,10 @@ struct ContentView: View {
                         if let asset = entry.asset {
                             PhotoThumbnail(asset: asset)
                         }
-                        Text("撮影日: \(entry.photoDt)")
-                        
+                        VStack {
+                            Text("タイトル:\(entry.title)")
+                            Text("撮影日: \(entry.photoDt)")
+                        }
                     }
                 }
             }
@@ -45,7 +48,10 @@ struct ContentView: View {
              */
         }
         .padding()
+        .onAppear {
+        }
     }
+        
     
     private var photos: [Photo] {
         

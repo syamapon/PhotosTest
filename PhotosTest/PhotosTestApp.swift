@@ -12,8 +12,13 @@ struct PhotosTestApp: App {
     
     @StateObject private var photoGet = PhotoGet()
     
+    // 選択されている写真ID
     @State var selectPhotoID: Photo.ID?
+    
+    // 左端で選択されている項目
     @State private var selectedSidebarItem: SidebarItem? = nil
+    
+    @State var selectPhoto: Photo?
     
     var body: some Scene {
         WindowGroup {
@@ -25,10 +30,8 @@ struct PhotosTestApp: App {
                 ContentView(photoGet: photoGet, selection: $selectPhotoID, selectedSidebarItem: selectedSidebarItem)
             } detail :{
                 //DetailView(selection: selectPhotoID)
-                DetailView(photoGet: self.photoGet, selection: self.selectPhotoID)
+                DetailView(photoGet: photoGet, selection: selectPhotoID)
             }
-            
-            
         }
     }
 }

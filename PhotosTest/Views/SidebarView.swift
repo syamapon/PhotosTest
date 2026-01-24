@@ -17,7 +17,6 @@ enum SidebarItem: Hashable {
         case .favorites: return "お気に入り"
         }
     }
-    
 }
 
 struct SidebarView: View {

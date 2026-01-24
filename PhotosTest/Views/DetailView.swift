@@ -14,24 +14,35 @@ struct DetailView: View {
     var photoGet : PhotoGet
     
     @State private var inputName: String = ""
+        
+    @State private var photo: Photo?
     
     init(photoGet:PhotoGet, selection: Photo.ID? = nil) {
         self.photoGet = photoGet
         self.selection = selection
+        
+        _photo = State(initialValue: photoGet.getPhoto(selection))
+        _inputName = State(initialValue: photoGet.getPhoto(selection)?.title ?? "")
     }
     
     var body: some View {
         VStack {
-            if let photo = self.photo {
-                
-                Text(photo.title ?? "Untitled")
+           
+            //if (pphotoGet.getPhoto())
+            
+            //Text(photoGet.getPhoto()?.title)
+            
+            if let photo = self.photo  {
+
+                Text(photo.title)
                 TextField("名前", text: $inputName)
                     .padding(10)
                 Button("保存") {
                     do {
-                        var mutablePhoto = photo
-                        mutablePhoto.title = inputName
-                        try mutablePhoto.storePhoto()
+                        // Persist the new title back to state and storage
+                        self.photo?.title = inputName
+                        try self.photo?.storePhoto()
+                        photoGet.setTitle(photo.id, setTitle: photo.title)
                     } catch {
                         // TODO: Present a user-facing error if needed
                         print("Failed to store photo: \(error)")
@@ -50,20 +61,21 @@ struct DetailView: View {
                 Text("No Selection")
             }
         }
-        .onAppear {
-            if let title = self.photo?.title {
-                self.inputName = title
+        .onChange(of: selection) { oldSelection, newSelection in
+            if let selectionID = newSelection {
+                self.photo = photoGet.getPhoto(selectionID)
+                // Reflect the current title in the text field
+                self.inputName = self.photo?.title ?? ""
+            } else {
+                // Clear state when there's no selection
+                self.photo = nil
+                self.inputName = ""
             }
         }
-    }
-    
-    private var photo: Photo? {
-        if let selectionID = selection {
-            return photoGet.photos.filter( { $0.id == selectionID }).first
+        .onAppear {
+            // Keep existing behavior minimal; state is initialized in init
         }
-        return nil
     }
-    
     
     func getImage(asset: PHAsset?) -> NSImage? {
         
