@@ -78,6 +78,8 @@ class PhotoGet :ObservableObject {
                     print("location: \(locationDescription)")
                     
                     
+                    
+                    
                     var _photoTitle: String = ""
                     
                     
@@ -93,7 +95,10 @@ class PhotoGet :ObservableObject {
                     catch {
                         print ("ERROR")
                     }
-
+                    
+                    _photo.locLatitude = asset.location?.coordinate.latitude
+                    _photo.locLongitude = asset.location?.coordinate.longitude
+                    
 
                     fetchedPhotos.append(_photo)
                 }

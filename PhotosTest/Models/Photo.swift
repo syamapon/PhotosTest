@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Photos
+import MapKit
 
 import SQLite
 
@@ -22,10 +23,23 @@ struct Photo: Identifiable, Hashable {
         return formatter.string(from: creationDate)
     }
     var image: Image?
+    
+    // 画像タイトル
     var title: String
+    
+    // 撮影日
     var creationDate: Date?
+    
+    // イメージ
     var asset: PHAsset?
     
+    // 緯度
+    var locLatitude: CLLocationDegrees?
+    
+    // 経度
+    var locLongitude: CLLocationDegrees?
+    
+    // 撮影日を文字列を取得
     var photoDt: String {
         guard let creationDate else { return "不明" }
         let formatter = DateFormatter()
@@ -33,6 +47,15 @@ struct Photo: Identifiable, Hashable {
         formatter.dateFormat = "yyyy年MM月dd日 HH時mm分"
         
         return formatter.string(from: creationDate)
+    }
+    
+    // 撮影座標を取得
+    var position: MapCameraPosition? {
+        guard let locLatitude, let locLongitude else { return nil }
+        
+        return MapCameraPosition.region(MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: locLatitude, longitude: locLongitude), // 東京駅
+            span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)))
     }
     
     static func == (lhs: Photo, rhs: Photo) -> Bool {

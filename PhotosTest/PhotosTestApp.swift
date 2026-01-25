@@ -31,7 +31,7 @@ struct PhotosTestApp: App {
             } detail :{
                 //DetailView(selection: selectPhotoID)
                 //DetailView(photoGet: photoGet, selection: selectPhotoID, selectPhoto: $selectPhoto)
-                DetailView(selection: $selectPhotoID, photoGet: photoGet, selectPhoto: $selectPhoto)
+                DetailView(photoGet: photoGet, selectPhoto: $selectPhoto)
             }
         }
     }

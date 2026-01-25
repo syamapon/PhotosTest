@@ -7,18 +7,21 @@
 
 import SwiftUI
 import Photos
+import MapKit
 
 struct DetailView: View {
     
-    @Binding var selection: Photo.ID?
+    //@Binding var selection: Photo.ID?
     
     @ObservedObject var photoGet : PhotoGet
     
     @Binding var selectPhoto : Photo?
     
     @State private var inputName: String = ""
+    
+    @State private var cameraPosition: MapCameraPosition = .automatic
         
-    @State private var photo: Photo?
+    //@State private var photo: Photo?
     
     /*
     init(photoGet:PhotoGet, selection: Photo.ID? = nil) {
@@ -38,10 +41,19 @@ struct DetailView: View {
             //Text(photoGet.getPhoto()?.title)
             
             if var _selectPhoto = self.selectPhoto {
-                Text(_selectPhoto.title)
+                
+                //Text(inputName)
+                //Text(self.selectPhoto?.title ?? "no name")
+  
                 TextField("名前", text: $inputName)
                 Button("設定") {
-                    self.selectPhoto?.title = inputName
+                    do {
+                        _selectPhoto.title = inputName
+                        try _selectPhoto.storePhoto()
+                    }
+                    catch {
+                        print("Failed to store photo: \(error)")
+                    }
                 }
                 if let creationDate = _selectPhoto.creationDate {
                     Text(creationDate.description)
@@ -52,8 +64,12 @@ struct DetailView: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 600, height: 600)
                 }
+                Map(position: $cameraPosition)
+                    .ignoresSafeArea()
             }
+
             
+            /*
             if let photo = self.photo  {
 
                 Text(photo.title)
@@ -82,7 +98,13 @@ struct DetailView: View {
             } else {
                 Text("No Selection")
             }
+             */
         }
+        .onChange(of: selectPhoto, initial: true, { _, newValue in
+            inputName = newValue?.title ?? ""
+            cameraPosition = newValue?.position ?? .automatic
+        })
+        /*
         .onChange(of: selection) { oldSelection, newSelection in
             if let selectionID = newSelection {
                 self.photo = photoGet.getPhoto(selectionID)
@@ -97,6 +119,7 @@ struct DetailView: View {
         .onAppear {
             // Keep existing behavior minimal; state is initialized in init
         }
+         */
     }
     
     func getImage(asset: PHAsset?) -> NSImage? {

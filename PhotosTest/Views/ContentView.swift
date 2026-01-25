@@ -22,9 +22,20 @@ struct ContentView: View {
         VStack {
             List(photos, selection: $selectPhoto) { entry in
                 NavigationLink(value: entry) {
-                    Text(entry.title)
+                    //Text(entry.title)
+                    HStack {
+                        if let asset = entry.asset {
+                            PhotoThumbnail(asset: asset)
+                        }
+                        VStack {
+                            Text("タイトル:\(entry.title)")
+                            Text("撮影日: \(entry.photoDt)")
+                        }
+                    }
+                    
                 }
             }
+            /*
             List(photos, selection: $selection) { entry in
                 NavigationLink(value: entry.id) {
                     HStack {
@@ -38,6 +49,7 @@ struct ContentView: View {
                     }
                 }
             }
+             */
             
             /*
              List(photoGet.photos) { entry in
