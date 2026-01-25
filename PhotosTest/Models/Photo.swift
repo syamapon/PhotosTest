@@ -57,7 +57,7 @@ struct Photo: Identifiable, Hashable {
             center: CLLocationCoordinate2D(latitude: locLatitude, longitude: locLongitude), // 東京駅
             span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)))
     }
-    
+        
     static func == (lhs: Photo, rhs: Photo) -> Bool {
         lhs.id == rhs.id
     }

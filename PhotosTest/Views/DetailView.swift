@@ -62,10 +62,20 @@ struct DetailView: View {
                     Image(nsImage: getNsImage)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: 600, height: 600)
+                        .frame(width: 400, height: 500)
                 }
-                Map(position: $cameraPosition)
-                    .ignoresSafeArea()
+                Map(position: $cameraPosition) {
+                    if let photo = selectPhoto {
+                        let coordinate = CLLocationCoordinate2D(latitude: photo.locLatitude ?? 0.0, longitude: photo.locLongitude ?? 0.0)
+                        Marker(photo.title, coordinate: coordinate)
+                    }
+                }
+                .mapControls({
+                    MapZoomStepper()
+                    MapCompass()
+                    MapScaleView()
+                })
+                .ignoresSafeArea()
             }
 
             
