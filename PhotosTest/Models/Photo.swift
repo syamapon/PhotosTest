@@ -39,6 +39,9 @@ struct Photo: Identifiable, Hashable {
     // 経度
     var locLongitude: CLLocationDegrees?
     
+    // WEBサイトURL
+    var url: String?
+    
     // 撮影日を文字列を取得
     var photoDt: String {
         guard let creationDate else { return "不明" }
@@ -107,13 +110,18 @@ struct Photo: Identifiable, Hashable {
         let id = Expression<String>("id")
         let createdAt = Expression<Date?>("createdAt")
         let title = Expression<String>("title")
+        let url = Expression<String>("url")
         
         // 更新
         let target = plants.filter(id == self.id)
-        let updated = try db.run(target.update(title <- self.title))
+        let updated = try db.run(target.update(title <- self.title,
+                                           url <- self.url ?? ""))
         if updated == 0 {
             // 未登録であれば、追加する
-            let insert = plants.insert(id <- self.id, title <- self.title, createdAt <- self.creationDate)
+            let insert = plants.insert(id <- self.id,
+                                    title <- self.title,
+                                    createdAt <- self.creationDate,
+                                    url <- self.url ?? "")
             try db.run(insert)
         }
         
@@ -152,12 +160,14 @@ struct Photo: Identifiable, Hashable {
         let id = Expression<String>("id")
         let createdAt = Expression<Date?>("createdAt")
         let title = Expression<String>("title")
+        let url = Expression<String?>("url")
 
         // Ensure table exists (matches storePhoto schema)
         try db.run(plants.create(ifNotExists: true) { t in
             t.column(id, primaryKey: true)
             t.column(createdAt)
             t.column(title, unique: true)
+            t.column(url)
         })
 
         // Build a type-safe filter comparing Expression<String> to String
@@ -165,12 +175,13 @@ struct Photo: Identifiable, Hashable {
 
         // Example: iterate results (optional)
         for plant in try db.prepare(select) {
-            print(plant[id], plant[createdAt], plant[title])
+            print(plant[id], plant[createdAt] ?? "Not set", plant[title])
         }
         
         if let plant = try db.pluck(select) {
             self.creationDate = plant[createdAt]!
             self.title = plant[title]
+            self.url = plant[url]
         }
         
         print("title: \(self.title)")

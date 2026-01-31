@@ -21,6 +21,7 @@ struct DetailView: View {
     
     @State private var cameraPosition: MapCameraPosition = .automatic
         
+    @State private var isShowUpdateDlg: Bool = false
     //@State private var photo: Photo?
     
     /*
@@ -34,6 +35,7 @@ struct DetailView: View {
      */
     
     var body: some View {
+        
         VStack {
            
             //if (pphotoGet.getPhoto())
@@ -42,28 +44,58 @@ struct DetailView: View {
             
             if var _selectPhoto = self.selectPhoto {
                 
+                HStack {
+                    if let getNsImage = getImage(asset: _selectPhoto.asset) {
+                        Image(nsImage: getNsImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 392, height: 550)
+                    }
+                    VStack {
+                        /*
+                        TextField("名前", text: $inputName)
+                            .padding(2)
+                         */
+                        Text("名前:\(_selectPhoto.title)")
+                            .frame(maxWidth: .infinity, alignment:.leading)
+                            .padding(2)
+                        Text("撮影日: \(_selectPhoto.photoDt)")
+                            .frame(maxWidth: .infinity, alignment:.leading)
+                            .padding(2)
+                        if let url = _selectPhoto.url {
+                            Link("サイト", destination: URL(string:url)!)
+                                .frame(maxWidth: .infinity, alignment:.leading)
+                                .padding(2)
+                        }
+                        else {
+                            Text("サイト未設定")
+                                .frame(maxWidth: .infinity, alignment:.leading)
+                                .padding(2)
+                        }
+                        /*
+                        Button("設定") {
+                            do {
+                                _selectPhoto.title = inputName
+                                try _selectPhoto.storePhoto()
+                            }
+                            catch {
+                                print("Failed to store photo: \(error)")
+                            }
+                        }.frame(maxWidth: .infinity, alignment:.trailing)
+                            .padding(2)
+                         */
+                        Button("編集") { isShowUpdateDlg.toggle()}
+                            .sheet(isPresented: $isShowUpdateDlg, onDismiss: didDismiss) {
+                                //Text("編集画面")
+                                EditView(selectPhoto: $selectPhoto, isShowUpdateDlg: $isShowUpdateDlg   )
+                            }.frame(maxWidth: .infinity, alignment:.trailing)
+                            .padding(10)
+
+                    }
+                }
                 //Text(inputName)
                 //Text(self.selectPhoto?.title ?? "no name")
-  
-                TextField("名前", text: $inputName)
-                Button("設定") {
-                    do {
-                        _selectPhoto.title = inputName
-                        try _selectPhoto.storePhoto()
-                    }
-                    catch {
-                        print("Failed to store photo: \(error)")
-                    }
-                }
-                if let creationDate = _selectPhoto.creationDate {
-                    Text(creationDate.description)
-                }
-                if let getNsImage = getImage(asset: _selectPhoto.asset) {
-                    Image(nsImage: getNsImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 400, height: 500)
-                }
+
                 Map(position: $cameraPosition) {
                     if let photo = selectPhoto {
                         let coordinate = CLLocationCoordinate2D(latitude: photo.locLatitude ?? 0.0, longitude: photo.locLongitude ?? 0.0)
@@ -132,6 +164,10 @@ struct DetailView: View {
          */
     }
     
+    func didDismiss() {
+        
+    }
+    
     func getImage(asset: PHAsset?) -> NSImage? {
         
         if let imgAssset = asset {
@@ -144,7 +180,7 @@ struct DetailView: View {
             
             PHImageManager.default().requestImage(
                 for: imgAssset,
-                targetSize: CGSize(width: 1200, height: 1200),
+                targetSize: CGSize(width: 1000, height: 1400),
                 contentMode: .aspectFill,
                 options: options
             ) { image, _ in

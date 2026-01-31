@@ -86,9 +86,7 @@ class PhotoGet :ObservableObject {
                     // 画像オブジェクトを作成
                     var _photo = Photo(title: _photoTitle, asset: asset)
                     _photo.creationDate = asset.creationDate
-                    //self.photos.append(contentsOf: [_photo])
-                    //self.photos.append(_photo)
-                    //_self.photos.append(_photo)
+                    
                     do {
                         try _photo.setData()
                     }
@@ -96,6 +94,7 @@ class PhotoGet :ObservableObject {
                         print ("ERROR")
                     }
                     
+                    // 位置情報を設定
                     _photo.locLatitude = asset.location?.coordinate.latitude
                     _photo.locLongitude = asset.location?.coordinate.longitude
                     
