@@ -63,9 +63,12 @@ struct DetailView: View {
                             .frame(maxWidth: .infinity, alignment:.leading)
                             .padding(2)
                         if let url = _selectPhoto.url {
-                            Link("サイト", destination: URL(string:url)!)
-                                .frame(maxWidth: .infinity, alignment:.leading)
-                                .padding(2)
+                            if (!url.isEmpty) {
+                                Link("サイト", destination: URL(string:url)!)
+                                    .frame(maxWidth: .infinity, alignment:.leading)
+                                    .padding(2)
+                            }
+
                         }
                         else {
                             Text("サイト未設定")

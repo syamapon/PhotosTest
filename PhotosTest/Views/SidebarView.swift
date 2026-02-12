@@ -8,13 +8,13 @@
 import SwiftUI
 
 enum SidebarItem: Hashable {
-    case all, recents, favorites
+    case all, tree, flower
     
     var title: String {
         switch self {
         case .all: return "全て"
-        case .recents: return "最近"
-        case .favorites: return "お気に入り"
+        case .tree: return "木"
+        case .flower: return "花"
         }
     }
 }
@@ -27,8 +27,8 @@ struct SidebarView: View {
         List(selection: $selection, content: {
             Section(header: Text("ライブラリ")) {
                 NavigationLink(value: SidebarItem.all, label: {Text(SidebarItem.all.title)})
-                NavigationLink(value: SidebarItem.recents, label: {Text(SidebarItem.recents.title)})
-                NavigationLink(value: SidebarItem.favorites, label: {Text(SidebarItem.favorites.title)})
+                NavigationLink(value: SidebarItem.tree, label: {Text(SidebarItem.tree.title)})
+                NavigationLink(value: SidebarItem.flower, label: {Text(SidebarItem.flower.title)})
             }
         })
     }

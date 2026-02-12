@@ -42,6 +42,12 @@ struct Photo: Identifiable, Hashable {
     // WEBサイトURL
     var url: String?
     
+    // 登録されているアルバムのタイトル
+    var albumTitle: String?
+    
+    // テーブルの名前
+    let tblName: String = "plantsInToyama"
+    
     // 撮影日を文字列を取得
     var photoDt: String {
         guard let creationDate else { return "不明" }
@@ -105,7 +111,7 @@ struct Photo: Identifiable, Hashable {
         let dbPath = try databaseURL().path
         let db = try Connection(dbPath)
         
-        let plants = Table("plants")
+        let plants = Table(tblName)
         
         let id = Expression<String>("id")
         let createdAt = Expression<Date?>("createdAt")
@@ -154,7 +160,7 @@ struct Photo: Identifiable, Hashable {
         
         let dbPath = try databaseURL().path
         let db = try Connection(dbPath)
-        let plants = Table("plants")
+        let plants = Table(tblName)
 
         // Define column expressions in this scope to match the schema
         let id = Expression<String>("id")
@@ -166,7 +172,7 @@ struct Photo: Identifiable, Hashable {
         try db.run(plants.create(ifNotExists: true) { t in
             t.column(id, primaryKey: true)
             t.column(createdAt)
-            t.column(title, unique: true)
+            t.column(title)
             t.column(url)
         })
 
