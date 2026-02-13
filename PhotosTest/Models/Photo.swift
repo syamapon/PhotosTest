@@ -22,16 +22,14 @@ struct Photo: Identifiable, Hashable {
         
         return formatter.string(from: creationDate)
     }
-    var image: Image?
-    
     // 画像タイトル
-    var title: String
+    var title: String?
     
     // 撮影日
     var creationDate: Date?
     
-    // イメージ
-    var asset: PHAsset?
+    // 写真
+    let asset: PHAsset
     
     // 緯度
     var locLatitude: CLLocationDegrees?
@@ -66,7 +64,22 @@ struct Photo: Identifiable, Hashable {
             center: CLLocationCoordinate2D(latitude: locLatitude, longitude: locLongitude), // 東京駅
             span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)))
     }
+            
+    /// イニシャライザ
+    /// - parameter setImage    Mac上の写真
+    init(setImage asset: PHAsset) {
         
+        // 写真データ
+        self.asset = asset
+        
+        // 作成日
+        self.creationDate = asset.creationDate
+
+        // 位置情報を設定
+        self.locLatitude = asset.location?.coordinate.latitude
+        self.locLongitude = asset.location?.coordinate.longitude
+    }
+    
     static func == (lhs: Photo, rhs: Photo) -> Bool {
         lhs.id == rhs.id
     }
@@ -75,20 +88,9 @@ struct Photo: Identifiable, Hashable {
         hasher.combine(id)
     }
     
-    init(title: String, asset: PHAsset?) {
-        self.title = title
-        self.asset = asset
-        
-        do {
-            try setData()
-        } catch {
-            print("ERROR")
-        }
-        
 
-    }
-    
-    // Dataの保存先のパスをURLで取得
+    /// Dataの保存先のパスをURLで取得
+    /// - returns:Data保存先ファイルのパス
     func databaseURL() throws -> URL {
         let fm = FileManager.default
         let appSupport = try fm.url(
@@ -115,7 +117,7 @@ struct Photo: Identifiable, Hashable {
         
         let id = Expression<String>("id")
         let createdAt = Expression<Date?>("createdAt")
-        let title = Expression<String>("title")
+        let title = Expression<String?>("title")
         let url = Expression<String>("url")
         
         // 更新
@@ -156,6 +158,7 @@ struct Photo: Identifiable, Hashable {
         
     }
     
+    /// データ設定処理
     mutating func setData() throws {
         
         let dbPath = try databaseURL().path

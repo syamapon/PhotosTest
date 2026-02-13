@@ -56,7 +56,7 @@ struct DetailView: View {
                         TextField("名前", text: $inputName)
                             .padding(2)
                          */
-                        Text("名前:\(_selectPhoto.title)")
+                        Text("名前:\(_selectPhoto.title ?? "")")
                             .frame(maxWidth: .infinity, alignment:.leading)
                             .padding(2)
                         Text("撮影日: \(_selectPhoto.photoDt)")
@@ -102,7 +102,7 @@ struct DetailView: View {
                 Map(position: $cameraPosition) {
                     if let photo = selectPhoto {
                         let coordinate = CLLocationCoordinate2D(latitude: photo.locLatitude ?? 0.0, longitude: photo.locLongitude ?? 0.0)
-                        Marker(photo.title, coordinate: coordinate)
+                        Marker(photo.title ?? "", coordinate: coordinate)
                     }
                 }
                 .mapControls({

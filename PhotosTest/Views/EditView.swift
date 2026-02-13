@@ -69,7 +69,7 @@ struct EditView: View {
         }
         .onAppear {
             if let photo = self.selectPhoto {
-                inputName = photo.title
+                inputName = photo.title ?? ""
                 inputUrl = photo.url ?? ""
             }
         }

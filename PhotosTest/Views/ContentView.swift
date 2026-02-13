@@ -30,11 +30,9 @@ struct ContentView: View {
                 NavigationLink(value: entry) {
                     //Text(entry.title)
                     HStack {
-                        if let asset = entry.asset {
-                            PhotoThumbnail(asset: asset)
-                        }
+                        PhotoThumbnail(asset: entry.asset )
                         VStack {
-                            Text("タイトル:\(entry.title)")
+                            Text("タイトル:\(entry.title ?? "")")
                             Text("撮影日: \(entry.photoDt)")
                         }
                     }
@@ -93,7 +91,8 @@ struct ContentView: View {
         }
         
         if searchName != "" {
-            photos = photos.filter({$0.title.contains(searchName)})
+            //photos = photos.filter({$0.title.contains(searchName)})
+            photos = photos.filter({photo in (photo.title ?? "").contains(searchName)})
         }
         
         return photos

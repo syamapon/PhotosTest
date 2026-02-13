@@ -48,66 +48,52 @@ class PhotoGet :ObservableObject {
             switch status {
             case .authorized, .limited:
                
-                // アルバム取得
+                // アルバム(花・木・植物）を取得
                 let fetchOptions = PHFetchOptions()
-                /*
-                let p1 = NSPredicate(format: "title == %@", "植物")
-                let p2 = NSPredicate(format: "title == %@", "花")
-                 */
-                //let predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [p1, p2])
-                //fetchOptions.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [p1, p2])
                 fetchOptions.predicate = NSPredicate(format: "title IN %@", ["花", "木", "植物"])
-                let collection = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: fetchOptions)
-                print(collection.count)
                 
+                // アルバムのコレクションを取得
+                let albumCollection = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: fetchOptions)
+                print(albumCollection.count)
+                
+                // 内部で保持する、写真データ配列
                 var fetchedPhotos: [Photo] = []
                 
-                for i in 0..<collection.count {
-                    let album = collection.object(at: i)
+                // 読み込んだアルバムの数だけループ
+                for i in 0..<albumCollection.count {
+                    
+                    // アルバム取得
+                    let album = albumCollection.object(at: i)
                     print(album.localizedTitle ?? "NoTitle")
                     
-                    // アルバムに登録されたイメージの取得
+                    // アルバムに登録された写真リストの取得
                     let fetchOptionsByAlbum = PHFetchOptions()
                     fetchOptionsByAlbum.sortDescriptors = [
                         NSSortDescriptor(key: "creationDate", ascending: false)
                     ]
-                    
                     let assets = PHAsset.fetchAssets(in: album, options: fetchOptionsByAlbum)
                     
-                    assets.enumerateObjects { asset, _, _ in
-                        print(asset.creationDate ?? "")
+                    // アルバム内の写真を列挙して、写真の配列を作成
+                    assets.enumerateObjects { asset, idx, _ in
                         
-                        print(asset.localIdentifier)
-                        let locationDescription = asset.location.map { "\($0.coordinate.latitude), \($0.coordinate.longitude)" } ?? "nil"
-                        print("location: \(locationDescription)")
-                        
-                        
-                        
-                        
-                        var _photoTitle: String = ""
-                        
-                        
-                        // 画像オブジェクトを作成
-                        var _photo = Photo(title: _photoTitle, asset: asset)
-                        _photo.creationDate = asset.creationDate
+                        print("Album:\(album.localizedTitle ?? "NoTitle")　Photo:\(idx + 1)")
+
+                        // 写真をもとにデータ設定
+                        var _photo = Photo(setImage: asset)
                         _photo.albumTitle = album.localizedTitle
                         
+                        // DBをもとにデータ設定
                         do {
                             try _photo.setData()
+                            
+                            fetchedPhotos.append(_photo)
                         }
                         catch {
-                            print ("ERROR")
+                            print ("Photo SetData Error: \(error)")
                         }
-                        
-                        // 位置情報を設定
-                        _photo.locLatitude = asset.location?.coordinate.latitude
-                        _photo.locLongitude = asset.location?.coordinate.longitude
-                        
-                        fetchedPhotos.append(_photo)
                     }
                 }
                 
-               
                 DispatchQueue.main.async {
                     // ここで @Published / @StateObject が持つ状態を更新する
                     self.photos = fetchedPhotos
