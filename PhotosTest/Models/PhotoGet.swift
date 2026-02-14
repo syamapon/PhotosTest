@@ -11,37 +11,18 @@ import Photos
 
 class PhotoGet :ObservableObject {
     
+    // 写真リスト
     @Published var photos: [Photo] = []
     
+    /// イニシャライザ
+    ///
     init()
     {
         setPhotos()
     }
-    
-    func getPhoto(_ sectionID: Photo.ID?) -> Photo? {
-        if let _selectionID = sectionID {
-            let photo = photos.first(where: { $0.id == _selectionID })
-            
-            if var p = photo {
-                do {
-                    try p.setData()
-                    //self.photo = p
-                } catch {
-                    print("setData error:", error)
-                }
-                return p
-            }
-            // self.inputName = self.photo?.title ?? ""
-        }
-        return nil
-    }
-    
-    func setTitle(_ id: Photo.ID?, setTitle title: String) {
-        if var _photo = getPhoto(id) {
-            _photo.title = title
-        }
-    }
-    
+        
+    /// アルバム画像を読み込み
+    ///
     func setPhotos() {
         
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
@@ -79,13 +60,14 @@ class PhotoGet :ObservableObject {
                         print("Album:\(album.localizedTitle ?? "NoTitle")　Photo:\(idx + 1)")
 
                         // 写真をもとにデータ設定
-                        var _photo = Photo(setImage: asset)
+                        let _photo = Photo(setImage: asset)
                         _photo.albumTitle = album.localizedTitle
                         
                         // DBをもとにデータ設定
                         do {
                             try _photo.setData()
                             
+                            // 写真リストに追加
                             fetchedPhotos.append(_photo)
                         }
                         catch {
@@ -108,11 +90,6 @@ class PhotoGet :ObservableObject {
             }
         }
     }
-    
-
-    
-    
-    
 }
 
 

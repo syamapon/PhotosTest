@@ -37,18 +37,21 @@ struct EditView: View {
         .toolbar {
             ToolbarItem(placement: .confirmationAction, content: {
                 Button(action: {
-                    isShowUpdateDlg = false
-                    if var photo = selectPhoto {
-                        photo.title = inputName
-                        photo.url = inputUrl
-                        do {
-                            try photo.storePhoto()
-                        }
-                        catch {
-                            print("Error saving photo: \(error.localizedDescription)")
-                        }
-                        
+                    // 保存ボタンの押下
+                    guard var photo = selectPhoto else {
+                        return
                     }
+                    
+                    photo.title = inputName
+                    photo.url = inputUrl
+                    do {
+                        try photo.storePhoto()
+                    }
+                    catch {
+                        print("Error saving photo: \(error.localizedDescription)")
+                    }
+                    
+                    isShowUpdateDlg = false
                 }, label: {Text("保存")})
             })
             

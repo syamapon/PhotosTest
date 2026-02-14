@@ -8,18 +8,22 @@
 import SwiftUI
 import Photos
 
+/// 写真データの一覧表示
 struct ContentView: View {
     
+    // 写真データ取得
     @ObservedObject var photoGet : PhotoGet
-    @Binding var selection: Photo.ID?
-    
+  
+    // 検索文字列
     @State var searchName: String = ""
     
     // 左端で選択されている項目
     let selectedSidebarItem: SidebarItem?
     
+    // 選択中の写真データ
     @Binding var selectPhoto: Photo?
     
+    /// Body
     var body: some View {
         VStack {
             HStack {
@@ -28,7 +32,6 @@ struct ContentView: View {
             }
             List(photos, selection: $selectPhoto) { entry in
                 NavigationLink(value: entry) {
-                    //Text(entry.title)
                     HStack {
                         PhotoThumbnail(asset: entry.asset )
                         VStack {
@@ -38,41 +41,11 @@ struct ContentView: View {
                     }
                 }
             }
-            /*
-            List(photos, selection: $selection) { entry in
-                NavigationLink(value: entry.id) {
-                    HStack {
-                        if let asset = entry.asset {
-                            PhotoThumbnail(asset: asset)
-                        }
-                        VStack {
-                            Text("タイトル:\(entry.title)")
-                            Text("撮影日: \(entry.photoDt)")
-                        }
-                    }
-                }
-            }
-             */
-            
-            /*
-             List(photoGet.photos) { entry in
-             NavigationLink(value: entry.id) {
-             HStack {
-             
-             if let asset = entry.asset {
-             PhotoThumbnail(asset: asset)
-             }
-             Text("撮影日: \(entry.photoDt)")
-             
-             }
-             }
-             }
-             */
         }
         .padding()
     }
         
-    
+    /// 読み込み写真データリスト
     private var photos: [Photo] {
         
         var photos: [Photo] = photoGet.photos
@@ -98,6 +71,11 @@ struct ContentView: View {
         return photos
     }
     
+    /// 写真データがアルバムに属している時、trueを返す
+    /// - Parameters:
+    ///   - title: アルバムのタイトル
+    ///   - photo: 写真データ
+    /// - Returns: 写真データがアルバムに属している時、true
     private func isAlbum(albumTitle title: String, _ photo : Photo) -> Bool {
         
         if photo.albumTitle == title {

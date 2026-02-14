@@ -11,7 +11,7 @@ import MapKit
 
 import SQLite
 
-struct Photo: Identifiable, Hashable {
+class Photo: Identifiable, Hashable {
     
     // ID
     var id: String {
@@ -24,6 +24,12 @@ struct Photo: Identifiable, Hashable {
     }
     // 画像タイトル
     var title: String?
+    
+    // 別名
+    var alias: String?
+    
+    // 開花時期
+    var bloomTime: String?
     
     // 撮影日
     var creationDate: Date?
@@ -43,7 +49,7 @@ struct Photo: Identifiable, Hashable {
     // 登録されているアルバムのタイトル
     var albumTitle: String?
     
-    // テーブルの名前
+    // 登録される、テーブルの名前
     let tblName: String = "plantsInToyama"
     
     // 撮影日を文字列を取得
@@ -88,7 +94,6 @@ struct Photo: Identifiable, Hashable {
         hasher.combine(id)
     }
     
-
     /// Dataの保存先のパスをURLで取得
     /// - returns:Data保存先ファイルのパス
     func databaseURL() throws -> URL {
@@ -107,8 +112,9 @@ struct Photo: Identifiable, Hashable {
         return dir.appendingPathComponent("plants.sqlite")
     }
     
-    // 写真データを保存
-    mutating func storePhoto() throws {
+    /// 写真データを保存
+    ///
+    func storePhoto() throws {
 
         let dbPath = try databaseURL().path
         let db = try Connection(dbPath)
@@ -133,33 +139,12 @@ struct Photo: Identifiable, Hashable {
             try db.run(insert)
         }
         
-
-        
-        do {
-            try self.setData()
-        }
-        catch {
-            print("ERROR")
-        }
-
-        
-        /*
-        for plant in try db.prepare(plants) {
-            print(plant[id], plant[createdAt], plant[title])
-        }
-         */
-        
-        /*
-        let select = plants.filter(id == self.id)
-        for plant in try db.prepare(select) {
-            print(plant[id], plant[createdAt], plant[title])
-        }
-         */
-        
+        //try self.setData()
     }
     
     /// データ設定処理
-    mutating func setData() throws {
+    /// 
+     func setData() throws {
         
         let dbPath = try databaseURL().path
         let db = try Connection(dbPath)
@@ -192,10 +177,6 @@ struct Photo: Identifiable, Hashable {
             self.title = plant[title]
             self.url = plant[url]
         }
-        
-        print("title: \(self.title)")
     }
-    
-    
 }
 

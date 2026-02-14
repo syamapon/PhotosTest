@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct PhotosTestApp: App {
     
+    
     @StateObject private var photoGet = PhotoGet()
     
     // 選択されている写真ID
@@ -27,7 +28,7 @@ struct PhotosTestApp: App {
             } content: {
                 //ContentView(selection: $selection)
                 //ContentView(selection: $selection, selectedSidebarItem: selectedSidebarItem)
-                ContentView(photoGet: photoGet, selection: $selectPhotoID, selectedSidebarItem: selectedSidebarItem, selectPhoto: $selectPhoto)
+                ContentView(photoGet: photoGet, selectedSidebarItem: selectedSidebarItem, selectPhoto: $selectPhoto)
             } detail :{
                 //DetailView(selection: selectPhotoID)
                 //DetailView(photoGet: photoGet, selection: selectPhotoID, selectPhoto: $selectPhoto)
