@@ -7,43 +7,70 @@
 
 import SwiftUI
 
+/// Ω
 struct EditView: View {
     
     @Binding var selectPhoto: Photo?
     
     @Binding var isShowUpdateDlg: Bool
     
+    
+    /// タイトル入力
     @State private var inputName: String = ""
+        
+    /// 別名
+    @State private var aliasName: String = ""
+    
+    /// URL入力
     @State private var inputUrl: String = ""
     
-    /*
-    init(selectPhoto: Binding<Photo?>) {
-        //self._selectPhoto = selectPhoto
-        //self._inputName = State(initialValue: selectPhoto.wrappedValue?.title ?? "")
-    }
-     */
+    /// 説明
+    @State private var info: String = ""
+    
+    @State private var isChecked: Bool = false
+    
+    @State private var isCheck: [Bool] = [false, false, false, false]
+    
+    
+    /// 開花時期
+    @State private var bloomSeasons: [BloomSeason] = [
+        BloomSeason(name: "春", isOn: false),
+        BloomSeason(name: "夏", isOn: false),
+        BloomSeason(name: "秋", isOn: false),
+        BloomSeason(name: "冬", isOn: false) ]
     
     var body: some View {
         Form {
-            Section(header: Text("Edit")) {
-                if let _ = selectPhoto {
-                    TextField("タイトル", text: $inputName, prompt: Text("名前を入力してください"))
-                    TextField("URL", text: $inputUrl, prompt: Text("URLを入力してください"))
-                } else {
-                    Text("写真が選択されていません")
+            Section {
+                TextField("名前", text: $inputName, prompt: Text("名前を入力してください")).padding(5)
+                TextField("別名", text: $aliasName, prompt: Text("別名を入力してください"))
+                TextField("URL", text: $inputUrl, prompt: Text("URLを入力してください"))
+
+            }.padding(5)
+            Section(header: Text("開花時期")) {
+                HStack {
+                    ForEach($bloomSeasons) {
+                        $bloomSeason in
+                        Toggle(bloomSeason.name, isOn:$bloomSeason.isOn).padding(.leading, 5)
+                    }
                 }
-            }
+            }.padding(5)
+            Section(header: Text("説明")) {
+                TextEditor(text: $info).frame(height: 80).border(Color.gray)
+            }.padding(5)
         }
         .toolbar {
             ToolbarItem(placement: .confirmationAction, content: {
                 Button(action: {
                     // 保存ボタンの押下
-                    guard var photo = selectPhoto else {
+                    guard let photo = selectPhoto else {
                         return
                     }
-                    
                     photo.title = inputName
                     photo.url = inputUrl
+                    photo.aliasName = aliasName
+                    photo.bloomSeasons = bloomSeasons
+                                        
                     do {
                         try photo.storePhoto()
                     }
@@ -59,21 +86,17 @@ struct EditView: View {
                 Button(action: {isShowUpdateDlg = false}, label: {
                     Text("キャンセル")})
             })
-            /*
-            ToolbarItem(placement: .confirmationAction, content: {
-                Button(action: {
-                    if var photo = selectPhoto {
-                    if var photo = selectPhoto {
-                        photo.title = inputName
-                    }
-                }, label: {Text("SAVE")})
-            })
-             */
         }
         .onAppear {
             if let photo = self.selectPhoto {
                 inputName = photo.title ?? ""
                 inputUrl = photo.url ?? ""
+                aliasName = photo.aliasName ?? ""
+                for season in photo.bloomSeasons where season.isOn {
+                    if let idx = self.bloomSeasons.firstIndex(where: { $0.name == season.name }) {
+                        self.bloomSeasons[idx].isOn = true
+                    }
+                }
             }
         }
     }

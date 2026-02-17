@@ -26,10 +26,7 @@ class Photo: Identifiable, Hashable {
     var title: String?
     
     // 別名
-    var alias: String?
-    
-    // 開花時期
-    var bloomTime: String?
+    var aliasName: String?
     
     // 撮影日
     var creationDate: Date?
@@ -70,6 +67,11 @@ class Photo: Identifiable, Hashable {
             center: CLLocationCoordinate2D(latitude: locLatitude, longitude: locLongitude), // 東京駅
             span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)))
     }
+    
+    var bloomSeasons: [BloomSeason] = [BloomSeason(name: "春", isOn: false),
+                                    BloomSeason(name: "夏", isOn: false),
+                                    BloomSeason(name: "秋", isOn: false),
+                                    BloomSeason(name: "冬", isOn: false)]
             
     /// イニシャライザ
     /// - parameter setImage    Mac上の写真
@@ -125,28 +127,37 @@ class Photo: Identifiable, Hashable {
         let createdAt = Expression<Date?>("createdAt")
         let title = Expression<String?>("title")
         let url = Expression<String>("url")
+        let aliasName = Expression<String?>("aliasName")
+        let seasons = Expression<String?>("bloomSeasons")
+        
+        let _seasons = bloomSeasons.filter{$0.isOn}.map{$0.name}.joined(separator: ",")
+        print("\(_seasons)")
         
         // 更新
         let target = plants.filter(id == self.id)
         let updated = try db.run(target.update(title <- self.title,
-                                           url <- self.url ?? ""))
+                                           url <- self.url ?? "",
+                                           aliasName <- self.aliasName ?? "",
+                                           seasons <- _seasons))
         if updated == 0 {
             // 未登録であれば、追加する
             let insert = plants.insert(id <- self.id,
                                     title <- self.title,
                                     createdAt <- self.creationDate,
-                                    url <- self.url ?? "")
+                                    url <- self.url ?? "",
+                                    aliasName <- self.aliasName ?? "",
+                                    seasons <- _seasons)
             try db.run(insert)
         }
         
-        //try self.setData()
     }
     
-    /// データ設定処理
-    /// 
+    /// データ設定
      func setData() throws {
         
         let dbPath = try databaseURL().path
+        print("dbPath:\(dbPath)")
+                  
         let db = try Connection(dbPath)
         let plants = Table(tblName)
 
@@ -155,6 +166,8 @@ class Photo: Identifiable, Hashable {
         let createdAt = Expression<Date?>("createdAt")
         let title = Expression<String>("title")
         let url = Expression<String?>("url")
+        let aliasName = Expression<String?>("aliasName")
+        let seasons = Expression<String?>("bloomSeasons")
 
         // Ensure table exists (matches storePhoto schema)
         try db.run(plants.create(ifNotExists: true) { t in
@@ -162,6 +175,8 @@ class Photo: Identifiable, Hashable {
             t.column(createdAt)
             t.column(title)
             t.column(url)
+            t.column(aliasName)
+            t.column(seasons)
         })
 
         // Build a type-safe filter comparing Expression<String> to String
@@ -176,7 +191,23 @@ class Photo: Identifiable, Hashable {
             self.creationDate = plant[createdAt]!
             self.title = plant[title]
             self.url = plant[url]
+            self.aliasName = plant[aliasName]
+            
+            if let _seasons = plant[seasons] {
+                let _seasonNames: [String] = _seasons.components(separatedBy: ",")
+                bloomSeasons.indices.forEach { i in
+                    if _seasonNames.contains(bloomSeasons[i].name) {
+                        bloomSeasons[i].isOn = true
+                    }
+                }
+            }
         }
     }
+}
+
+struct BloomSeason: Identifiable {
+    let id = UUID()
+    let name: String
+    var isOn: Bool
 }
 

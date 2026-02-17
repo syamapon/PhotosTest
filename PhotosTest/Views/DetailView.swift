@@ -35,31 +35,59 @@ struct DetailView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 392, height: 550)
+                            .padding(5)
                     }
                     VStack {
-                        Text("名前:\(_selectPhoto.title ?? "")")
-                            .frame(maxWidth: .infinity, alignment:.leading)
-                            .padding(2)
-                        Text("撮影日: \(_selectPhoto.photoDt)")
-                            .frame(maxWidth: .infinity, alignment:.leading)
-                            .padding(2)
-                        if let url = _selectPhoto.url {
-                            if (!url.isEmpty) {
-                                Link("サイト", destination: URL(string:url)!)
+                        Grid {
+                            GridRow {
+                                Text("名前")
+                                Text("\(_selectPhoto.title ?? "")")
                                     .frame(maxWidth: .infinity, alignment:.leading)
-                                    .padding(2)
                             }
-                        }
-                        else {
-                            Text("サイト未設定")
-                                .frame(maxWidth: .infinity, alignment:.leading)
-                                .padding(2)
-                        }
+                            GridRow {
+                                Text("撮影日")
+                                Text("\(_selectPhoto.photoDt)")
+                                    .frame(maxWidth: .infinity, alignment:.leading)
+                            }
+                            GridRow {
+                                Text("別名")
+                                Text("\(_selectPhoto.aliasName ?? "")")
+                                    .frame(maxWidth: .infinity, alignment:.leading)
+                            }
+                            GridRow {
+                                Text("開花季節")
+                                HStack {
+                                    ForEach(_selectPhoto.bloomSeasons) {
+                                        season in if (season.isOn) {Text(season.name)}
+                                    }
+                                }.frame(maxWidth: .infinity, alignment:.leading)
+                            }
+                            GridRow {
+                                Text("サイト")
+                                if let url = _selectPhoto.url {
+                                    if (!url.isEmpty) {
+                                        Link("URL", destination: URL(string:url)!)
+                                            .frame(maxWidth: .infinity, alignment:.leading)
+                                            .padding(2)
+                                    }
+                                    else {
+                                        Text("未設定")
+                                    }
+                                }
+                                else {
+                                    Text("未設定")
+                                }
+                                
+                            }
+ 
+                        }.frame(maxWidth: .infinity, alignment:.leading)
+                         .padding(2)
                         Button("編集") { isShowUpdateDlg.toggle()}
-                            .sheet(isPresented: $isShowUpdateDlg, onDismiss: {}) {
+                                .sheet(isPresented: $isShowUpdateDlg, onDismiss: {}) {
                                 EditView(selectPhoto: $selectPhoto, isShowUpdateDlg: $isShowUpdateDlg   )
                             }.frame(maxWidth: .infinity, alignment:.trailing)
                             .padding(10)
+                        Spacer()
                     }
                 }
                 Map(position: $cameraPosition) {
@@ -75,6 +103,7 @@ struct DetailView: View {
                 })
                 .ignoresSafeArea()
             }
+            Spacer()
 
         }
         .onChange(of: selectPhoto, initial: true, { _, newValue in
