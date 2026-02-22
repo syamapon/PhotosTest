@@ -33,7 +33,7 @@ struct ContentView: View {
             List(photos, selection: $selectPhoto) { entry in
                 NavigationLink(value: entry) {
                     HStack {
-                        PhotoThumbnail(asset: entry.asset )
+                        PhotoThumbnail(asset: entry.asset, size: .init(width: 50, height: 50))
                         VStack {
                             Text("タイトル:\(entry.title ?? "")")
                             Text("撮影日: \(entry.photoDt)")

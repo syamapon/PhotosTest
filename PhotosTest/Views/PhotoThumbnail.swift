@@ -12,6 +12,8 @@ import Photos
 struct PhotoThumbnail: View {
     
     let asset: PHAsset
+    let size: CGSize
+    
     @State private var image: NSImage?
     
     var body: some View {
@@ -19,7 +21,9 @@ struct PhotoThumbnail: View {
             if let image {
                 Image(nsImage: image)
                     .resizable()
-                    .frame(width: 50, height: 50)
+                //    .frame(width: 50, height: 50)
+                    .frame(width: self.size.width, height: self.size.height)
+                
             } else {
                 Color.gray
             }
@@ -32,7 +36,7 @@ struct PhotoThumbnail: View {
     func loadImage() {
         PHImageManager.default().requestImage(
             for: asset,
-            targetSize: CGSize(width: 50, height: 50),
+            targetSize: size,
             contentMode: .aspectFill,
             options: nil
         ) { image, _ in

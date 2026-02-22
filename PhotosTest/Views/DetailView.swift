@@ -72,10 +72,11 @@ struct DetailView: View {
                                     }
                                     else {
                                         Text("未設定")
+                                            .frame(maxWidth: .infinity, alignment:.leading)
                                     }
                                 }
                                 else {
-                                    Text("未設定")
+                                    Text("未設定").frame(maxWidth: .infinity, alignment:.leading)
                                 }
                                 
                             }
@@ -87,6 +88,22 @@ struct DetailView: View {
                                 EditView(selectPhoto: $selectPhoto, isShowUpdateDlg: $isShowUpdateDlg   )
                             }.frame(maxWidth: .infinity, alignment:.trailing)
                             .padding(10)
+                        
+                        if (photos.count > 0) {
+                            Text("同名の写真").frame(maxWidth: .infinity, alignment:.leading)
+                            ScrollView(.horizontal) {
+                                HStack {
+                                    ForEach (photos) {
+                                        _photo in
+                                            PhotoThumbnail(asset: _photo.asset, size: .init(width: 100, height: 100))
+                                                .onTapGesture {
+                                                    selectPhoto = _photo
+                                                }
+                                    }
+                                }
+                            }
+                        }
+
                         Spacer()
                     }
                 }
@@ -109,6 +126,26 @@ struct DetailView: View {
         .onChange(of: selectPhoto, initial: true, { _, newValue in
             cameraPosition = newValue?.position ?? .automatic
         })
+    }
+    
+    
+    private var photos: [Photo] {
+        
+        guard selectPhoto != nil && selectPhoto!.title != nil && !selectPhoto!.title!.isEmpty else {
+            return []
+        }
+        
+        // 同名の写真を取得
+        var photos: [Photo] = photoGet.photos
+        photos = photos.filter {photo in
+            photo.id != selectPhoto!.id
+            && photo.title == selectPhoto!.title
+        }        
+        // 重複除去
+        var alreadyAdded: Set<Photo> = []
+        let uniquePhotos = photos.filter { alreadyAdded.insert($0).inserted}
+        
+        return uniquePhotos
     }
     
     /// イメージオブジェクト取得
