@@ -11,17 +11,17 @@ import Photos
 /// 写真データの一覧表示
 struct ContentView: View {
     
-    // 写真データ取得
+    /// 写真データ取得
     @ObservedObject var photoGet : PhotoGet
-  
-    // 検索文字列
-    @State var searchName: String = ""
     
-    // 左端で選択されている項目
+    /// 選択中の写真データ
+    @Binding var selectPhoto: Photo?
+    
+    /// 左端で選択されている項目
     let selectedSidebarItem: SidebarItem?
     
-    // 選択中の写真データ
-    @Binding var selectPhoto: Photo?
+    /// 検索文字列
+    @State var searchName: String = ""
     
     /// Body
     var body: some View {

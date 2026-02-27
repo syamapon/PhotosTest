@@ -27,17 +27,8 @@ struct EditView: View {
     /// 説明
     @State private var info: String = ""
     
-    @State private var isChecked: Bool = false
-    
-    @State private var isCheck: [Bool] = [false, false, false, false]
-    
-    
     /// 開花時期
-    @State private var bloomSeasons: [BloomSeason] = [
-        BloomSeason(name: "春", isOn: false),
-        BloomSeason(name: "夏", isOn: false),
-        BloomSeason(name: "秋", isOn: false),
-        BloomSeason(name: "冬", isOn: false) ]
+    @State private var bloomSeasons: [BloomSeason] = BloomSeason.GetFourSeasons()
     
     var body: some View {
         Form {
@@ -51,7 +42,7 @@ struct EditView: View {
                 HStack {
                     ForEach($bloomSeasons) {
                         $bloomSeason in
-                        Toggle(bloomSeason.name, isOn:$bloomSeason.isOn).padding(.leading, 5)
+                        Toggle(bloomSeason.season.name, isOn:$bloomSeason.isOn).padding(.leading, 5)
                     }
                 }
             }.padding(5)
@@ -93,7 +84,7 @@ struct EditView: View {
                 inputUrl = photo.url ?? ""
                 aliasName = photo.aliasName ?? ""
                 for season in photo.bloomSeasons where season.isOn {
-                    if let idx = self.bloomSeasons.firstIndex(where: { $0.name == season.name }) {
+                    if let idx = self.bloomSeasons.firstIndex(where: { $0.season.name == season.season.name }) {
                         self.bloomSeasons[idx].isOn = true
                     }
                 }

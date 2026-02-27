@@ -8,6 +8,7 @@
 import SwiftUI
 
 enum SidebarItem: Hashable {
+    
     case all, tree, flower
     
     var title: String {
@@ -20,11 +21,12 @@ enum SidebarItem: Hashable {
 }
 
 struct SidebarView: View {
-    
-    @Binding var selection: SidebarItem?
+        
+    /// 選択されている大分類
+    @Binding var selectedSidebarItem: SidebarItem?
     
     var body: some View {
-        List(selection: $selection, content: {
+        List(selection: $selectedSidebarItem, content: {
             Section(header: Text("ライブラリ")) {
                 NavigationLink(value: SidebarItem.all, label: {Text(SidebarItem.all.title)})
                 NavigationLink(value: SidebarItem.tree, label: {Text(SidebarItem.tree.title)})

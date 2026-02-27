@@ -9,20 +9,20 @@ import SwiftUI
 import Combine
 import Photos
 
+/// 写真アクセスを行う
 class PhotoGet :ObservableObject {
     
     // 写真リスト
     @Published var photos: [Photo] = []
-    
+        
     /// イニシャライザ
-    ///
     init()
     {
         setPhotos()
     }
         
-    /// アルバム画像を読み込み
-    ///
+    
+    /// アルバム画像の読み込み
     func setPhotos() {
         
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in

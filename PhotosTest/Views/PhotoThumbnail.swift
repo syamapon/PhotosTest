@@ -21,7 +21,6 @@ struct PhotoThumbnail: View {
             if let image {
                 Image(nsImage: image)
                     .resizable()
-                //    .frame(width: 50, height: 50)
                     .frame(width: self.size.width, height: self.size.height)
                 
             } else {

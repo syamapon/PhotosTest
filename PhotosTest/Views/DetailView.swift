@@ -23,6 +23,8 @@ struct DetailView: View {
     /// ダイアログ表示フラグ
     @State private var isShowUpdateDlg: Bool = false
     
+    
+    /// body
     var body: some View {
         
         VStack {
@@ -36,6 +38,7 @@ struct DetailView: View {
                             .aspectRatio(contentMode: .fill)
                             .frame(width: 392, height: 550)
                             .padding(5)
+                            .draggable(getNsImage)
                     }
                     VStack {
                         Grid {
@@ -58,7 +61,7 @@ struct DetailView: View {
                                 Text("開花季節")
                                 HStack {
                                     ForEach(_selectPhoto.bloomSeasons) {
-                                        season in if (season.isOn) {Text(season.name)}
+                                        season in if (season.isOn) {Text(season.season.name)}
                                     }
                                 }.frame(maxWidth: .infinity, alignment:.leading)
                             }
@@ -89,11 +92,11 @@ struct DetailView: View {
                             }.frame(maxWidth: .infinity, alignment:.trailing)
                             .padding(10)
                         
-                        if (photos.count > 0) {
+                        if (sameNamePhotos.count > 0) {
                             Text("同名の写真").frame(maxWidth: .infinity, alignment:.leading)
                             ScrollView(.horizontal) {
                                 HStack {
-                                    ForEach (photos) {
+                                    ForEach (sameNamePhotos) {
                                         _photo in
                                             PhotoThumbnail(asset: _photo.asset, size: .init(width: 100, height: 100))
                                                 .onTapGesture {
@@ -128,13 +131,15 @@ struct DetailView: View {
         })
     }
     
-    
-    private var photos: [Photo] {
-        
-        guard selectPhoto != nil && selectPhoto!.title != nil && !selectPhoto!.title!.isEmpty else {
+    /// 同名の写真リストを取得
+    private var sameNamePhotos: [Photo] {
+       
+        // 選択されていない、選択された写真に名前が無い場合
+        guard selectPhoto != nil
+                && selectPhoto!.title != nil
+                && !selectPhoto!.title!.isEmpty else {
             return []
         }
-        
         // 同名の写真を取得
         var photos: [Photo] = photoGet.photos
         photos = photos.filter {photo in

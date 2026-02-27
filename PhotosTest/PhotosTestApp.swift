@@ -24,11 +24,11 @@ struct PhotosTestApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationSplitView {
-                SidebarView(selection: $selectedSidebarItem)
+                SidebarView(selectedSidebarItem: $selectedSidebarItem)
             } content: {
                 //ContentView(selection: $selection)
                 //ContentView(selection: $selection, selectedSidebarItem: selectedSidebarItem)
-                ContentView(photoGet: photoGet, selectedSidebarItem: selectedSidebarItem, selectPhoto: $selectPhoto)
+                ContentView(photoGet: photoGet, selectPhoto: $selectPhoto, selectedSidebarItem: selectedSidebarItem)
             } detail :{
                 //DetailView(selection: selectPhotoID)
                 //DetailView(photoGet: photoGet, selection: selectPhotoID, selectPhoto: $selectPhoto)

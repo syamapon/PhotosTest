@@ -46,10 +46,10 @@ class Photo: Identifiable, Hashable {
     // 登録されているアルバムのタイトル
     var albumTitle: String?
     
-    // 登録される、テーブルの名前
+    /// 登録される、テーブルの名前
     let tblName: String = "plantsInToyama"
     
-    // 撮影日を文字列を取得
+    /// 撮影日を文字列を取得
     var photoDt: String {
         guard let creationDate else { return "不明" }
         let formatter = DateFormatter()
@@ -59,7 +59,7 @@ class Photo: Identifiable, Hashable {
         return formatter.string(from: creationDate)
     }
     
-    // 撮影座標を取得
+    /// 撮影座標を取得
     var position: MapCameraPosition? {
         guard let locLatitude, let locLongitude else { return nil }
         
@@ -68,13 +68,11 @@ class Photo: Identifiable, Hashable {
             span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)))
     }
     
-    var bloomSeasons: [BloomSeason] = [BloomSeason(name: "春", isOn: false),
-                                    BloomSeason(name: "夏", isOn: false),
-                                    BloomSeason(name: "秋", isOn: false),
-                                    BloomSeason(name: "冬", isOn: false)]
-            
+    /// 四季
+    var bloomSeasons: [BloomSeason] = BloomSeason.GetFourSeasons()
+    
     /// イニシャライザ
-    /// - parameter setImage    Mac上の写真
+    /// - Parameter asset: 写真
     init(setImage asset: PHAsset) {
         
         // 写真データ
@@ -86,6 +84,7 @@ class Photo: Identifiable, Hashable {
         // 位置情報を設定
         self.locLatitude = asset.location?.coordinate.latitude
         self.locLongitude = asset.location?.coordinate.longitude
+        
     }
     
     static func == (lhs: Photo, rhs: Photo) -> Bool {
@@ -130,7 +129,7 @@ class Photo: Identifiable, Hashable {
         let aliasName = Expression<String?>("aliasName")
         let seasons = Expression<String?>("bloomSeasons")
         
-        let _seasons = bloomSeasons.filter{$0.isOn}.map{$0.name}.joined(separator: ",")
+        let _seasons = bloomSeasons.filter{$0.isOn}.map{$0.season.name}.joined(separator: ",")
         print("\(_seasons)")
         
         // 更新
@@ -196,7 +195,7 @@ class Photo: Identifiable, Hashable {
             if let _seasons = plant[seasons] {
                 let _seasonNames: [String] = _seasons.components(separatedBy: ",")
                 bloomSeasons.indices.forEach { i in
-                    if _seasonNames.contains(bloomSeasons[i].name) {
+                    if _seasonNames.contains(bloomSeasons[i].season.name) {
                         bloomSeasons[i].isOn = true
                     }
                 }
@@ -205,9 +204,48 @@ class Photo: Identifiable, Hashable {
     }
 }
 
+
+/// 開花時期
 struct BloomSeason: Identifiable {
+    
+    enum Season: CaseIterable {
+        case spring, summer, fall, winter
+        
+        var name: String {
+            switch self {
+                case .spring: return "春"
+                case .summer: return "夏"
+                case .fall: return "秋"
+                case .winter: return "冬"
+            }
+        }
+    }
+    
+    let season: Season
+    
+    /*
+    func seasonName () -> String {
+        switch (season) {
+        case .spring: return "春"
+        case .summer: return "夏"
+        case .fall: return "秋"
+        case .winter: return "冬"
+        }
+    }
+     */
+    
+    static func GetFourSeasons () -> [BloomSeason] {
+        
+        var seasons: [BloomSeason] = []
+        for season in BloomSeason.Season.allCases {
+            seasons.append(BloomSeason(season: season, isOn: false))
+        }
+        return seasons
+    }
+    
     let id = UUID()
-    let name: String
+    
+    //let name: String
     var isOn: Bool
 }
 
