@@ -18,7 +18,7 @@ struct ContentView: View {
     @Binding var selectPhoto: Photo?
     
     /// 左端で選択されている項目
-    let selectedSidebarItem: SidebarItem?
+    let selectedSidebarItem: PlantCategory.Category?
     
     /// 検索文字列
     @State var searchName: String = ""
@@ -50,19 +50,17 @@ struct ContentView: View {
         
         var photos: [Photo] = photoGet.photos
         
-        switch selectedSidebarItem {
-        case .all, nil:
-            var seen = Set<Photo>()
-            // 重複除去
-            photos = photos.filter({photo in seen.insert(photo).inserted})
-        case .tree:
-            // 木
-            photos = photos.filter({photo in isAlbum(albumTitle: "木", photo)})
-        case .flower:
-            // 花
-            photos = photos.filter({photo in isAlbum(albumTitle: "花", photo)})
-        }
         
+        if selectedSidebarItem == nil {
+            photos = photoGet.photos
+        }
+        else if selectedSidebarItem == .all  {
+            photos = photoGet.photos
+        }
+        else {
+            photos = photos.filter({photo in photo.plantCategory[selectedSidebarItem!.index].isBelong})
+        }
+    
         if searchName != "" {
             //photos = photos.filter({$0.title.contains(searchName)})
             photos = photos.filter({photo in (photo.title ?? "").contains(searchName)})

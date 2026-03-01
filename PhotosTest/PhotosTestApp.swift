@@ -17,7 +17,7 @@ struct PhotosTestApp: App {
     @State var selectPhotoID: Photo.ID?
     
     // 左端で選択されている項目
-    @State private var selectedSidebarItem: SidebarItem? = nil
+    @State private var selectedSidebarItem: PlantCategory.Category? = nil
     
     @State var selectPhoto: Photo?
     
@@ -26,12 +26,8 @@ struct PhotosTestApp: App {
             NavigationSplitView {
                 SidebarView(selectedSidebarItem: $selectedSidebarItem)
             } content: {
-                //ContentView(selection: $selection)
-                //ContentView(selection: $selection, selectedSidebarItem: selectedSidebarItem)
                 ContentView(photoGet: photoGet, selectPhoto: $selectPhoto, selectedSidebarItem: selectedSidebarItem)
             } detail :{
-                //DetailView(selection: selectPhotoID)
-                //DetailView(photoGet: photoGet, selection: selectPhotoID, selectPhoto: $selectPhoto)
                 DetailView(photoGet: photoGet, selectPhoto: $selectPhoto)
             }
         }

@@ -7,30 +7,17 @@
 
 import SwiftUI
 
-enum SidebarItem: Hashable {
-    
-    case all, tree, flower
-    
-    var title: String {
-        switch self {
-        case .all: return "全て"
-        case .tree: return "木"
-        case .flower: return "花"
-        }
-    }
-}
-
 struct SidebarView: View {
         
     /// 選択されている大分類
-    @Binding var selectedSidebarItem: SidebarItem?
+    @Binding var selectedSidebarItem: PlantCategory.Category?
     
     var body: some View {
         List(selection: $selectedSidebarItem, content: {
             Section(header: Text("ライブラリ")) {
-                NavigationLink(value: SidebarItem.all, label: {Text(SidebarItem.all.title)})
-                NavigationLink(value: SidebarItem.tree, label: {Text(SidebarItem.tree.title)})
-                NavigationLink(value: SidebarItem.flower, label: {Text(SidebarItem.flower.title)})
+                ForEach(PlantCategory.Category.allCases, id: \.self) { category in
+                    NavigationLink(value: category, label: {Text(category.name)})
+                }
             }
         })
     }

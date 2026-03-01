@@ -23,7 +23,6 @@ struct DetailView: View {
     /// ダイアログ表示フラグ
     @State private var isShowUpdateDlg: Bool = false
     
-    
     /// body
     var body: some View {
         
@@ -43,13 +42,13 @@ struct DetailView: View {
                     VStack {
                         Grid {
                             GridRow {
-                                Text("名前")
+                                Text("名前（かな）")
                                 Text("\(_selectPhoto.title ?? "")")
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
                             GridRow {
-                                Text("撮影日")
-                                Text("\(_selectPhoto.photoDt)")
+                                Text("名前（漢字）")
+                                Text("\(_selectPhoto.kanjiName ?? "")")
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
                             GridRow {
@@ -58,12 +57,9 @@ struct DetailView: View {
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
                             GridRow {
-                                Text("開花季節")
-                                HStack {
-                                    ForEach(_selectPhoto.bloomSeasons) {
-                                        season in if (season.isOn) {Text(season.season.name)}
-                                    }
-                                }.frame(maxWidth: .infinity, alignment:.leading)
+                                Text("撮影日")
+                                Text("\(_selectPhoto.photoDt)")
+                                    .frame(maxWidth: .infinity, alignment:.leading)
                             }
                             GridRow {
                                 Text("サイト")
@@ -81,7 +77,32 @@ struct DetailView: View {
                                 else {
                                     Text("未設定").frame(maxWidth: .infinity, alignment:.leading)
                                 }
-                                
+                            }
+                            GridRow {
+                                Text("開花季節")
+                                HStack {
+                                    ForEach(_selectPhoto.bloomSeasons) {
+                                        season in if (season.isOn) {Text(season.season.name)}
+                                    }
+                                }.frame(maxWidth: .infinity, alignment:.leading)
+                            }
+                            GridRow {
+                                Text("種別")
+                                HStack {
+                                    ForEach(_selectPhoto.plantCategory) {
+                                        category in if (category.isBelong) {Text(category.category.name)}
+                                    }
+                                }.frame(maxWidth: .infinity, alignment:.leading)
+                            }
+                            GridRow {
+                                Text("特徴")
+                                Text("\(_selectPhoto.features ?? "")")
+                                    .frame(maxWidth: .infinity, alignment:.leading)
+                            }
+                            GridRow {
+                                Text("コメント")
+                                Text("\(_selectPhoto.comment ?? "")")
+                                    .frame(maxWidth: .infinity, alignment:.leading)
                             }
  
                         }.frame(maxWidth: .infinity, alignment:.leading)

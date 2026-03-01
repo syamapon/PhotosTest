@@ -31,7 +31,7 @@ class PhotoGet :ObservableObject {
                
                 // アルバム(花・木・植物）を取得
                 let fetchOptions = PHFetchOptions()
-                fetchOptions.predicate = NSPredicate(format: "title IN %@", ["花", "木", "植物"])
+                fetchOptions.predicate = NSPredicate(format: "title IN %@", ["植物"])
                 
                 // アルバムのコレクションを取得
                 let albumCollection = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: fetchOptions)
