@@ -43,26 +43,31 @@ struct DetailView: View {
                         Grid {
                             GridRow {
                                 Text("名前（かな）")
+                                    .frame(width:100, alignment:.leading)
                                 Text("\(_selectPhoto.title ?? "")")
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
                             GridRow {
                                 Text("名前（漢字）")
+                                    .frame(width:100, alignment:.leading)
                                 Text("\(_selectPhoto.kanjiName ?? "")")
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
                             GridRow {
                                 Text("別名")
+                                    .frame(width:100, alignment:.leading)
                                 Text("\(_selectPhoto.aliasName ?? "")")
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
                             GridRow {
                                 Text("撮影日")
+                                    .frame(width:100, alignment:.leading)
                                 Text("\(_selectPhoto.photoDt)")
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
                             GridRow {
                                 Text("サイト")
+                                    .frame(width:100, alignment:.leading)
                                 if let url = _selectPhoto.url {
                                     if (!url.isEmpty) {
                                         Link("URL", destination: URL(string:url)!)
@@ -80,6 +85,7 @@ struct DetailView: View {
                             }
                             GridRow {
                                 Text("開花季節")
+                                    .frame(width:100, alignment:.leading)
                                 HStack {
                                     ForEach(_selectPhoto.bloomSeasons) {
                                         season in if (season.isOn) {Text(season.season.name)}
@@ -88,6 +94,7 @@ struct DetailView: View {
                             }
                             GridRow {
                                 Text("種別")
+                                    .frame(width:100, alignment:.leading)
                                 HStack {
                                     ForEach(_selectPhoto.plantCategory) {
                                         category in if (category.isBelong) {Text(category.category.name)}
@@ -96,17 +103,21 @@ struct DetailView: View {
                             }
                             GridRow {
                                 Text("特徴")
+                                    .frame(width:100, alignment:.leading)
                                 Text("\(_selectPhoto.features ?? "")")
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
                             GridRow {
                                 Text("コメント")
+                                    .frame(width:100, alignment:.leading)
                                 Text("\(_selectPhoto.comment ?? "")")
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
  
                         }.frame(maxWidth: .infinity, alignment:.leading)
                          .padding(2)
+                        Divider().gridCellUnsizedAxes(.horizontal)
+                        
                         Button("編集") { isShowUpdateDlg.toggle()}
                                 .sheet(isPresented: $isShowUpdateDlg, onDismiss: {}) {
                                 EditView(selectPhoto: $selectPhoto, isShowUpdateDlg: $isShowUpdateDlg   )

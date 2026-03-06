@@ -17,7 +17,7 @@ struct ContentView: View {
     /// 選択中の写真データ
     @Binding var selectPhoto: Photo?
     
-    /// 左端で選択されている項目
+    /// 左端で選択されている項目（カテゴリー）
     let selectedSidebarItem: PlantCategory.Category?
     
     /// 検索文字列
@@ -35,8 +35,10 @@ struct ContentView: View {
                     HStack {
                         PhotoThumbnail(asset: entry.asset, size: .init(width: 50, height: 50))
                         VStack {
-                            Text("タイトル:\(entry.title ?? "")")
-                            Text("撮影日: \(entry.photoDt)")
+                            Text("\(entry.title ?? "")")
+                                .frame(maxWidth: .infinity, alignment: .init(horizontal: .leading, vertical: .top))
+                            Text(" \(entry.photoDt) 撮影")
+                                .frame(maxWidth: .infinity, alignment: .init(horizontal: .leading, vertical: .top))
                         }
                     }
                 }
@@ -45,12 +47,13 @@ struct ContentView: View {
         .padding()
     }
         
-    /// 読み込み写真データリスト
+    /// 選択されたカテゴリーに従って
+    /// 読み込み写真データリストを返す
     private var photos: [Photo] {
         
-        var photos: [Photo] = photoGet.photos
-        
-        
+        var photos: [Photo] = []
+        let index:Int? = selectedSidebarItem?.index
+                
         if selectedSidebarItem == nil {
             photos = photoGet.photos
         }
@@ -58,31 +61,26 @@ struct ContentView: View {
             photos = photoGet.photos
         }
         else {
-            photos = photos.filter({photo in photo.plantCategory[selectedSidebarItem!.index].isBelong})
+            photos = photoGet.photos.filter({photo in photo.isBelong(selectedSidebarItem!)})
         }
+        
+        /*
+        else {
+            photos = photoGet.photos.filter({photo in photo.plantCategory[index!].isBelong})
+        }
+         */
     
         if searchName != "" {
-            //photos = photos.filter({$0.title.contains(searchName)})
-            photos = photos.filter({photo in (photo.title ?? "").contains(searchName)})
+            photos = photoGet.photos.filter({
+                photo in (photo.title ?? "").contains(searchName)
+                || (photo.aliasName ?? "").contains(searchName)
+                || (photo.kanjiName ?? "").contains(searchName)
+            })
         }
         
         return photos
     }
     
-    /// 写真データがアルバムに属している時、trueを返す
-    /// - Parameters:
-    ///   - title: アルバムのタイトル
-    ///   - photo: 写真データ
-    /// - Returns: 写真データがアルバムに属している時、true
-    private func isAlbum(albumTitle title: String, _ photo : Photo) -> Bool {
-        
-        if photo.albumTitle == title {
-            return true
-        }
-        else {
-            return false
-        }
-    }
 }
 
 #Preview {

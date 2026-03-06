@@ -125,6 +125,18 @@ class Photo: Identifiable, Hashable {
         return dir.appendingPathComponent("plants.sqlite")
     }
     
+    func isBelong(_ category: PlantCategory.Category) -> Bool {
+        
+        let _category = self.plantCategory.filter( { $0.category == category }).first
+        
+        if _category?.isBelong ?? false {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
     /// 写真データを保存
     ///
     func storeData() throws {
@@ -273,6 +285,10 @@ struct PlantCategory: Identifiable {
         }
         return plantCategories
     }
+    
+    
+    
+    
     /// 植物の種類
     enum Category: CaseIterable {
         case all, fruit, flower, tree, vegitable, herb, grass
