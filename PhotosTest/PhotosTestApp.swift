@@ -25,6 +25,7 @@ struct PhotosTestApp: App {
         WindowGroup {
             NavigationSplitView {
                 SidebarView(selectedSidebarItem: $selectedSidebarItem)
+                //SidebarView()
             } content: {
                 ContentView(photoGet: photoGet, selectPhoto: $selectPhoto, selectedSidebarItem: selectedSidebarItem)
             } detail :{

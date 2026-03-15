@@ -155,7 +155,7 @@ struct DetailView: View {
                 })
                 .ignoresSafeArea()
             }
-            Spacer()
+            //Spacer()
 
         }
         .onChange(of: selectPhoto, initial: true, { _, newValue in
@@ -214,6 +214,6 @@ struct DetailView: View {
 }
 
 #Preview {
-    //DetailView()
+    DetailView(photoGet: PhotoGet(), selectPhoto: .constant(nil))
 }
 

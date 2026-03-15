@@ -84,5 +84,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    //ContentView(selection: )
+    ContentView(photoGet: PhotoGet(), selectPhoto: .constant(nil), selectedSidebarItem: .all)
 }

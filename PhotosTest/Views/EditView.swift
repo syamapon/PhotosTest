@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-/// Ω
+
+/// 入力画面
 struct EditView: View {
     
     @Binding var selectPhoto: Photo?
@@ -41,35 +42,119 @@ struct EditView: View {
     
     var body: some View {
         Form {
-            Section {
+            Section() {
                 TextField("名前（カナ）", text: $inputName, prompt: Text("名前（カナ）を入力してください")).padding(5)
                 TextField("名前（漢字）", text: $kanjiName, prompt: Text("名前（漢字）を入力してください"))
                 TextField("別名", text: $aliasName, prompt: Text("別名を入力してください"))
                 TextField("URL", text: $inputUrl, prompt: Text("URLを入力してください"))
 
-            }.padding(5)
-            Section(header: Text("開花時期")) {
-                HStack {
-                    ForEach($bloomSeasons) {
-                        $bloomSeason in
-                        Toggle(bloomSeason.season.name, isOn:$bloomSeason.isOn).padding(.leading, 5)
+                LabeledContent("開花時期") {
+                    HStack {
+                        ForEach($bloomSeasons) {
+                            $bloomSeason in
+                            Toggle(bloomSeason.season.name, isOn:$bloomSeason.isOn).toggleStyle(.button)
+                                .padding(.leading, 5)
+                        }
                     }
                 }
-            }.padding(5)
-            Section(header: Text("カテゴリー")) {
-                HStack {
-                    ForEach($plantCategory) {
-                        $category in
-                        Toggle(category.category.name, isOn: $category.isBelong).padding(.leading, 5)
+                
+                LabeledContent("カテゴリー") {
+                    HStack {
+                        ForEach($plantCategory) {
+                            $category in
+                            Toggle(category.category.name, isOn: $category.isBelong)
+                                .toggleStyle(.button)
+                                .padding(.leading, 5)
+                        }
                     }
                 }
+                
             }.padding(5)
+            Section {
+                Text("説明")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                TextEditor(text: $comment)
+                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
+                    .textEditorStyle(.plain)
+                    .border(Color.gray)
+
+                Text("特徴")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                TextEditor(text: $features)
+                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
+                    .textEditorStyle(.plain)
+                    .border(Color.gray)
+            }
+            /*
+            Section {
+                Text("説明")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                TextEditor(text: $comment)
+                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
+                    .textEditorStyle(.plain)
+                    .border(Color.gray)
+                    .listRowInsets(EdgeInsets()) // 必要に応じて
+
+                Text("特徴")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                TextEditor(text: $features)
+                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
+                    .textEditorStyle(.plain)
+                    .border(Color.gray)
+                    .listRowInsets(EdgeInsets())
+            }
+            
+            Section {
+                Text("説明")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                TextEditor(text: $comment)
+                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
+                    .textEditorStyle(.plain)
+                    .border(Color.gray)
+                    .listRowInsets(EdgeInsets()) // 必要なら左右インセットを詰める
+
+                Text("特徴")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                TextEditor(text: $features)
+                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
+                    .textEditorStyle(.plain)
+                    .border(Color.gray)
+                    .listRowInsets(EdgeInsets())
+            }
+            
+            Section {
+                LabeledContent("説明") {
+                    TextEditor(text: $comment)
+                        .frame(maxWidth: .infinity, minHeight: 80, alignment: .leading)
+                        .textEditorStyle(.plain)
+                        .border(Color.gray)
+                }
+                LabeledContent("特徴") {
+                    TextEditor(text: $features)
+                        .frame(maxWidth: .infinity, minHeight: 80, alignment: .leading)
+                        .textEditorStyle(.plain)
+                        .border(Color.gray)
+                }
+            }
+             */
+/*
             Section(header: Text("説明")) {
                 TextEditor(text: $comment).frame(height: 80).border(Color.gray)
             }.padding(5)
             Section(header: Text("特徴")) {
                 TextEditor(text: $features).frame(height: 80).border(Color.gray)
             }.padding(5)
+ */
         }
         .toolbar {
             ToolbarItem(placement: .confirmationAction, content: {
@@ -130,5 +215,8 @@ struct EditView: View {
 }
 
 #Preview {
-    //EditView(selectPhoto: .constant(nil))
+    EditView(
+        selectPhoto: .constant(nil),
+        isShowUpdateDlg: .constant(true)
+    )
 }

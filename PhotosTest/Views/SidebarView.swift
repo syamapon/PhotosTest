@@ -12,6 +12,7 @@ struct SidebarView: View {
     /// 選択されている大分類
     @Binding var selectedSidebarItem: PlantCategory.Category?
     
+    /// Body
     var body: some View {
         List(selection: $selectedSidebarItem, content: {
             Section(header: Text("ライブラリ")) {

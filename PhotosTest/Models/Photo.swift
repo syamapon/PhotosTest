@@ -16,7 +16,25 @@ class Photo: Identifiable, Hashable {
     /// 登録される、テーブルの名前
     let tblName: String = "plantsInToyama"
     
-    // ID
+    /// オブジェクトに紐づく写真
+    let asset: PHAsset
+    
+    /// 撮影日
+    var creationDate: Date? {
+        return asset.creationDate
+    }
+    
+    /// 写真を撮影した緯度
+    var locLatitude: CLLocationDegrees? {
+        return self.asset.location?.coordinate.latitude
+    }
+    
+    /// 写真を撮影した経度
+    var locLongitude: CLLocationDegrees? {
+        return self.asset.location?.coordinate.longitude
+    }
+    
+    /// オブジェクトを識別するID
     var id: String {
         guard let creationDate else { return "Empty" }
         let formatter = DateFormatter()
@@ -25,26 +43,14 @@ class Photo: Identifiable, Hashable {
         
         return formatter.string(from: creationDate)
     }
-    // 画像タイトル
+    /// 画像タイトル
     var title: String?
     
-    // 別名
+    /// 別名
     var aliasName: String?
     
-    // 漢字名
+    /// 漢字名
     var kanjiName: String?
-    
-    // 撮影日
-    var creationDate: Date?
-    
-    // 写真
-    let asset: PHAsset
-    
-    // 緯度
-    var locLatitude: CLLocationDegrees?
-    
-    // 経度
-    var locLongitude: CLLocationDegrees?
     
     // WEBサイトURL
     var url: String?
@@ -89,14 +95,7 @@ class Photo: Identifiable, Hashable {
         
         // 写真データ
         self.asset = asset
-        
-        // 作成日
-        self.creationDate = asset.creationDate
-        
-        // 位置情報を設定
-        self.locLatitude = asset.location?.coordinate.latitude
-        self.locLongitude = asset.location?.coordinate.longitude
-        
+                
     }
     
     static func == (lhs: Photo, rhs: Photo) -> Bool {
@@ -237,7 +236,6 @@ class Photo: Identifiable, Hashable {
             self.title = plant[title]
             self.aliasName = plant[aliasName]
             self.kanjiName = plant[kanjiName]
-            self.creationDate = plant[createdAt]!
             self.url = plant[url]
             self.comment = plant[comment]
             self.features = plant[features]
@@ -285,9 +283,6 @@ struct PlantCategory: Identifiable {
         }
         return plantCategories
     }
-    
-    
-    
     
     /// 植物の種類
     enum Category: CaseIterable {
