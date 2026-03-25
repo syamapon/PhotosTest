@@ -21,7 +21,6 @@ class PhotoGet :ObservableObject {
         setPhotos()
     }
         
-    
     /// アルバム画像の読み込み
     func setPhotos() {
         

@@ -14,7 +14,8 @@ import SQLite
 class Photo: Identifiable, Hashable {
     
     /// 登録される、テーブルの名前
-    let tblName: String = "plantsInToyama"
+    let tblName: String = "plants"
+    let tblNameInfo: String = "plantsInfo"
     
     /// オブジェクトに紐づく写真
     let asset: PHAsset
@@ -34,6 +35,9 @@ class Photo: Identifiable, Hashable {
         return self.asset.location?.coordinate.longitude
     }
     
+    // 登録されているアルバムのタイトル
+    var albumTitle: String?
+    
     /// オブジェクトを識別するID
     var id: String {
         guard let creationDate else { return "Empty" }
@@ -52,12 +56,15 @@ class Photo: Identifiable, Hashable {
     /// 漢字名
     var kanjiName: String?
     
-    // WEBサイトURL
+    /// WEBサイトURL
     var url: String?
     
-    // 登録されているアルバムのタイトル
-    var albumTitle: String?
+    /// wiki URL
+    var wiki: String?
     
+    /// 科
+    var family: String?
+
     /// 四季
     var bloomSeasons: [BloomSeason] = BloomSeason.GetFourSeasons()
     
@@ -69,6 +76,9 @@ class Photo: Identifiable, Hashable {
     
     /// コメント
     var comment: String?
+    
+    /// インフォ
+    var info: String?
     
     /// 撮影日を文字列を取得
     var photoDt: String {
@@ -95,7 +105,6 @@ class Photo: Identifiable, Hashable {
         
         // 写真データ
         self.asset = asset
-                
     }
     
     static func == (lhs: Photo, rhs: Photo) -> Bool {
@@ -140,6 +149,7 @@ class Photo: Identifiable, Hashable {
     ///
     func storeData() throws {
         
+        // plantsテーブルを更新
         let dbPath = try databaseURL().path
         let db = try Connection(dbPath)
         
@@ -147,46 +157,74 @@ class Photo: Identifiable, Hashable {
         
         let id = Expression<String>("id")
         let title = Expression<String?>("title")
-        let aliasName = Expression<String?>("aliasName")
-        let kanjiName = Expression<String?>("kanjiName")
         let createdAt = Expression<Date?>("createdAt")
-        let url = Expression<String>("url")
-        let seasons = Expression<String?>("bloomSeasons")
         let comment = Expression<String?>("comment")
-        let features = Expression<String?>("features")
         let category = Expression<String?>("category")
-        
-        // チェックされている季節を取得
-        let _seasons = self.bloomSeasons.filter{$0.isOn}.map{$0.season.name}.joined(separator: ",")
         
         // チェックされているカテゴリーを取得
         let _category = self.plantCategory.filter{$0.isBelong}.map{$0.category.name}.joined(separator: ",")
         
         // 更新
-        let target = plants.filter(id == self.id)
-        let updated = try db.run(target.update(title <- self.title,
-                                               url <- self.url ?? "",
-                                               aliasName <- self.aliasName ?? "",
-                                               seasons <- _seasons,
-                                               comment <- comment,
-                                               features <- features,
-                                               kanjiName <- kanjiName,
-                                               category <- _category))
+        var target = plants.filter(id == self.id)
+        var updated = try db.run(target.update(title <- self.title,
+                                           createdAt <- self.creationDate,
+                                           comment <- self.comment,
+                                           category <- _category))
+        // 追加
         if updated == 0 {
             // 未登録であれば、追加する
             let insert = plants.insert(id <- self.id,
-                                       title <- self.title,
-                                       createdAt <- self.creationDate,
-                                       url <- self.url ?? "",
-                                       aliasName <- self.aliasName ?? "",
-                                       seasons <- _seasons,
-                                       comment <- self.comment,
-                                       features <- self.features,
-                                       kanjiName <- self.kanjiName,
-                                       category <- _category)
+                                    title <- self.title,
+                                    createdAt <- self.creationDate,
+                                    comment <- self.comment,
+                                    category <- _category)
             try db.run(insert)
         }
         
+        
+        // plantsInfoテーブルを更新
+        if let _infoTitle = self.title {
+            
+            let plantsInfo = Table(tblNameInfo)
+
+            let infoTitle = Expression<String>("title")
+            let aliasName = Expression<String?>("aliasName")
+            let kanjiName = Expression<String?>("kanjiName")
+            let url = Expression<String?>("url")
+            let wiki = Expression<String?>("wiki")
+            let family = Expression<String?>("family")
+            let bloomSeasons = Expression<String?>("bloomSeasons")
+            let features = Expression<String?>("features")
+            let info = Expression<String?>("info")
+            
+            // チェックされている季節を取得
+            let _seasons = self.bloomSeasons.filter{$0.isOn}.map{$0.season.name}.joined(separator: ",")
+            
+            // 更新
+            target = plantsInfo.filter(infoTitle == _infoTitle)
+            updated = try db.run(target.update(aliasName <- self.aliasName,
+                                            kanjiName <- self.kanjiName,
+                                            url <- self.url,
+                                            wiki <- self.wiki,
+                                            family <- self.family,
+                                            bloomSeasons <- _seasons,
+                                            features <- self.features,
+                                            info <- self.info))
+            
+            if updated == 0 {
+                // 未登録であれば、追加する
+                let insert = plantsInfo.insert(infoTitle <- _infoTitle,
+                                            aliasName <- self.aliasName,
+                                            kanjiName <- self.kanjiName,
+                                            url <- self.url,
+                                            wiki <- self.wiki,
+                                            family <- self.family,
+                                            bloomSeasons <- _seasons,
+                                            features <- self.features,
+                                            info <- self.info)
+                try db.run(insert)
+            }
+        }
     }
     
     /// データ設定
@@ -197,63 +235,88 @@ class Photo: Identifiable, Hashable {
         
         let db = try Connection(dbPath)
         let plants = Table(tblName)
+        let plantsInfo = Table(tblNameInfo)
         
-        // Define column expressions in this scope to match the schema
+        // plants
         let id = Expression<String>("id")
-        let title = Expression<String>("title")
-        let aliasName = Expression<String?>("aliasName")
-        let kanjiName = Expression<String?>("kanjiName")
         let createdAt = Expression<Date?>("createdAt")
-        let url = Expression<String?>("url")
-        let seasons = Expression<String?>("bloomSeasons")
+        let title = Expression<String?>("title")
         let comment = Expression<String?>("comment")
-        let features = Expression<String?>("features")
         let category = Expression<String?>("category")
         
-        // Ensure table exists (matches storePhoto schema)
+        // plantsInfo
+        let infoTitle = Expression<String>("title")
+        let aliasName = Expression<String?>("aliasName")
+        let kanjiName = Expression<String?>("kanjiName")
+        let url = Expression<String?>("url")
+        let wiki = Expression<String?>("wiki")
+        let family = Expression<String?>("family")
+        let bloomSeasons = Expression<String?>("bloomSeasons")
+        let features = Expression<String?>("features")
+        let info = Expression<String?>("info")
+                
         try db.run(plants.create(ifNotExists: true) { t in
             t.column(id, primaryKey: true)
-            t.column(title)
-            t.column(aliasName)
-            t.column(kanjiName)
             t.column(createdAt)
-            t.column(url)
-            t.column(seasons)
+            t.column(title)
             t.column(comment)
-            t.column(features)
             t.column(category)
         })
         
-        // Build a type-safe filter comparing Expression<String> to String
-        let select = plants.filter(id == self.id)
+        try db.run(plantsInfo.create(ifNotExists: true) { t in
+            t.column(infoTitle, primaryKey: true)
+            t.column(aliasName)
+            t.column(kanjiName)
+            t.column(url)
+            t.column(wiki)
+            t.column(family)
+            t.column(bloomSeasons)
+            t.column(features)
+            t.column(info)
+        })
+        
+        // Build a type-safe filter compaSring Expression<String> to String
+
         
         // Example: iterate results (optional)
-        for plant in try db.prepare(select) {
-            print(plant[id], plant[createdAt] ?? "Not set", plant[title])
-        }
+        //for plant in try db.prepare(select) {
+        //    print(plant[id], plant[createdAt] ?? "Not set", plant[title])
+        //}
+        
+        // plants
+        var select = plants.filter(id == self.id)
         
         if let plant = try db.pluck(select) {
-            self.title = plant[title]
-            self.aliasName = plant[aliasName]
-            self.kanjiName = plant[kanjiName]
-            self.url = plant[url]
-            self.comment = plant[comment]
-            self.features = plant[features]
-                        
-            if let _seasons = plant[seasons] {
-                let _seasonNames: [String] = _seasons.components(separatedBy: ",")
-                bloomSeasons.indices.forEach { i in
-                    if _seasonNames.contains(bloomSeasons[i].season.name) {
-                        bloomSeasons[i].isOn = true
-                    }
-                }
-            }
             
+            self.title = plant[title]
+            self.comment = plant[comment]
             if let _category = plant[category] {
                 let _categoryNames: [String] = _category.components(separatedBy: ",")
                 self.plantCategory.indices.forEach { i in
                     if _categoryNames.contains(self.plantCategory[i].category.name) {
                         self.plantCategory[i].isBelong = true
+                    }
+                }
+            }
+        }
+        
+        // plantsInfo
+        if let _title = self.title {
+            select = plantsInfo.filter(infoTitle == _title)
+            
+            if let plantInfo = try db.pluck(select) {
+                
+                self.aliasName = plantInfo[aliasName]
+                self.kanjiName = plantInfo[kanjiName]
+                self.url = plantInfo[url]
+                self.wiki = plantInfo[wiki]
+                self.family = plantInfo[family]
+                if let _season = plantInfo[bloomSeasons] {
+                    let _seasons: [String] = _season.components(separatedBy: ",")
+                    self.bloomSeasons.indices.forEach { i in
+                        if _seasons.contains(self.bloomSeasons[i].season.name) {
+                            self.bloomSeasons[i].isOn = true
+                        }
                     }
                 }
             }

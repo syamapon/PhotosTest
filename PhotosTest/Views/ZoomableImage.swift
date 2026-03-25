@@ -8,11 +8,49 @@
 import SwiftUI
 
 struct ZoomableImage: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+
+    let image: NSImage
+    let initImageSize: CGSize
+
+    // Clamp a value to the given closed range (replaces use of inaccessible .clamped)
+    @State private var scale: CGFloat = 1.0
+
+    init(image: NSImage, initImageSize: CGSize) {
+        self.image = image
+        self.scale = 1.0
+        self.initImageSize = initImageSize
     }
+
+    var body: some View {
+
+        Image(nsImage: image)
+            .resizable()
+            .scaledToFit()
+            .frame(
+                width: self.initImageSize.width * scale,
+                height: self.initImageSize.height * scale
+            )
+            .contentShape(Rectangle())
+            // ダブルクリックでズーム切り替え（任意）
+            .onTapGesture(count: 2) {
+                withAnimation(.easeInOut) {
+                    if scale < 8.0 {
+                        scale = min(scale * 2, 8.0)
+                    } else {
+                        scale = 1.0
+                    }
+                }
+            }
+            .onTapGesture(count: 3) {
+                withAnimation(.easeInOut) {
+                    scale = 1.0
+                }
+            }
+
+    }
+
 }
 
 #Preview {
-    ZoomableImage()
+    //ZoomableImage(image: .constant(nil))
 }

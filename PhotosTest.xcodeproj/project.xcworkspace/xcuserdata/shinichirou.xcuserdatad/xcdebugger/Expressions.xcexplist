@@ -11,6 +11,25 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "ContentView.photos.getter:ContentView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "selectedSidebarItem!.index">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ZoomableImage.body.getter:ZoomableImage.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in DetailView.body.getter:DetailView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "inputName">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "closure #1 in closure #1 in ContentView.body.getter:ContentView.swift">
          <PersistentStrings>
             <PersistentString
@@ -27,20 +46,15 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "ContentView.photos.getter:ContentView.swift">
+         contextName = "closure #1 in ZoomableImage.body.getter:ZoomableImage.swift">
          <PersistentStrings>
             <PersistentString
-               value = "selectedSidebarItem!.index">
+               value = "geo.size.width">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #1 in DetailView.body.getter:DetailView.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "inputName">
-            </PersistentString>
-         </PersistentStrings>
+         contextName = "ZoomableImage.init(image:):ZoomableImage.swift">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

@@ -32,14 +32,16 @@ struct DetailView: View {
                 
                 HStack {
                     if let getNsImage = getImage(asset: _selectPhoto.asset) {
-                        Image(nsImage: getNsImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 392, height: 550)
-                            .padding(5)
-                            .draggable(getNsImage)
+                        ScrollView([.horizontal, .vertical]) {
+                            ZoomableImage(image: getNsImage, initImageSize: CGSize(width: 392, height: 550))
+                                //.frame(width: 392, height: 550)
+                                //.padding(5)
+                                .draggable(getNsImage)
+                        }
+                        .frame(width: 392, height: 550)
+                        .padding(5)
                     }
-                    VStack {
+                    VStack(alignment: .leading, spacing: 0) {
                         Grid {
                             GridRow {
                                 Text("名前（かな）")
@@ -66,11 +68,35 @@ struct DetailView: View {
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
                             GridRow {
+                                Text("科")
+                                    .frame(width:100, alignment:.leading)
+                                Text("\(_selectPhoto.family ?? "")")
+                                    .frame(maxWidth: .infinity, alignment:.leading)
+                            }
+                            GridRow {
                                 Text("サイト")
                                     .frame(width:100, alignment:.leading)
                                 if let url = _selectPhoto.url {
                                     if (!url.isEmpty) {
                                         Link("URL", destination: URL(string:url)!)
+                                            .frame(maxWidth: .infinity, alignment:.leading)
+                                            .padding(2)
+                                    }
+                                    else {
+                                        Text("未設定")
+                                            .frame(maxWidth: .infinity, alignment:.leading)
+                                    }
+                                }
+                                else {
+                                    Text("未設定").frame(maxWidth: .infinity, alignment:.leading)
+                                }
+                            }
+                            GridRow {
+                                Text("WIKI")
+                                    .frame(width:100, alignment:.leading)
+                                if let wiki = _selectPhoto.wiki {
+                                    if (!wiki.isEmpty) {
+                                        Link("wikipedia", destination: URL(string:wiki)!)
                                             .frame(maxWidth: .infinity, alignment:.leading)
                                             .padding(2)
                                     }
@@ -103,18 +129,23 @@ struct DetailView: View {
                             }
                             GridRow {
                                 Text("特徴")
-                                    .frame(width:100, alignment:.leading)
+                                    .frame(width:100, height:50, alignment:.leading)
                                 Text("\(_selectPhoto.features ?? "")")
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
                             GridRow {
+                                Text("情報")
+                                    .frame(width:100, height:50, alignment:.leading)
+                                Text("\(_selectPhoto.info ?? "")")
+                                    .frame(maxWidth: .infinity, alignment:.leading)
+                            }
+                            GridRow {
                                 Text("コメント")
-                                    .frame(width:100, alignment:.leading)
+                                    .frame(width:100, height:50, alignment:.leading)
                                 Text("\(_selectPhoto.comment ?? "")")
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
- 
-                        }.frame(maxWidth: .infinity, alignment:.leading)
+                        }.frame(maxWidth: .infinity, alignment: .topLeading)
                          .padding(2)
                         Divider().gridCellUnsizedAxes(.horizontal)
                         
@@ -138,9 +169,7 @@ struct DetailView: View {
                                 }
                             }
                         }
-
-                        Spacer()
-                    }
+                    }.frame(maxWidth: .infinity, alignment:.init(horizontal: .leading, vertical: .top))
                 }
                 Map(position: $cameraPosition) {
                     if let photo = selectPhoto {
@@ -153,9 +182,7 @@ struct DetailView: View {
                     MapCompass()
                     MapScaleView()
                 })
-                .ignoresSafeArea()
             }
-            //Spacer()
 
         }
         .onChange(of: selectPhoto, initial: true, { _, newValue in

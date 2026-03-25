@@ -25,14 +25,24 @@ struct EditView: View {
     /// 漢字名入力
     @State private var kanjiName: String = ""
     
+    /// 科
+    @State private var family: String = ""
+    
     /// URL入力
     @State private var inputUrl: String = ""
     
+    /// WIKIPEDIA URL
+    @State private var wikiPedia: String = ""
+        
     /// 説明入力
     @State private var comment: String = ""
     
     /// 特徴入力
     @State private var features: String = ""
+    
+    
+    /// 情報入力
+    @State private var info: String = ""
     
     /// 開花時期入力
     @State private var bloomSeasons: [BloomSeason] = BloomSeason.GetFourSeasons()
@@ -47,7 +57,9 @@ struct EditView: View {
                 TextField("名前（漢字）", text: $kanjiName, prompt: Text("名前（漢字）を入力してください"))
                 TextField("別名", text: $aliasName, prompt: Text("別名を入力してください"))
                 TextField("URL", text: $inputUrl, prompt: Text("URLを入力してください"))
-
+                TextField("wikipedia", text: $wikiPedia, prompt: Text("WikiPedia URLを入力してください"))
+                TextField("科", text: $family, prompt: Text("科を入力してください"))
+                
                 LabeledContent("開花時期") {
                     HStack {
                         ForEach($bloomSeasons) {
@@ -83,6 +95,14 @@ struct EditView: View {
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 TextEditor(text: $features)
+                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
+                    .textEditorStyle(.plain)
+                    .border(Color.gray)
+                
+                Text("情報")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                TextEditor(text: $info)
                     .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
                     .textEditorStyle(.plain)
                     .border(Color.gray)
@@ -171,6 +191,8 @@ struct EditView: View {
                     photo.features = features
                     photo.comment = comment
                     photo.plantCategory = plantCategory
+                    photo.wiki = wikiPedia
+                    photo.family = family
                                         
                     do {
                         try photo.storeData()
