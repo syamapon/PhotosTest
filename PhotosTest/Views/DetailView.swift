@@ -23,6 +23,9 @@ struct DetailView: View {
     /// ダイアログ表示フラグ
     @State private var isShowUpdateDlg: Bool = false
     
+    @State private var doubleClickPoint: CGPoint = .zero
+    
+    
     /// body
     var body: some View {
         
@@ -33,7 +36,7 @@ struct DetailView: View {
                 HStack {
                     if let getNsImage = getImage(asset: _selectPhoto.asset) {
                         ScrollView([.horizontal, .vertical]) {
-                            ZoomableImage(image: getNsImage, initImageSize: CGSize(width: 392, height: 550))
+                            ZoomableImage(image: getNsImage, initImageSize: CGSize(width: 392, height: 550), lastDoubleTapPoint: $doubleClickPoint)
                                 //.frame(width: 392, height: 550)
                                 //.padding(5)
                                 .draggable(getNsImage)
@@ -145,6 +148,10 @@ struct DetailView: View {
                                 Text("\(_selectPhoto.comment ?? "")")
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
+                            GridRow {
+                                Text("クリック位置")
+                                Text("\(doubleClickPoint.y), \(doubleClickPoint.x)")
+                            }
                         }.frame(maxWidth: .infinity, alignment: .topLeading)
                          .padding(2)
                         Divider().gridCellUnsizedAxes(.horizontal)
@@ -241,6 +248,6 @@ struct DetailView: View {
 }
 
 #Preview {
-    DetailView(photoGet: PhotoGet(), selectPhoto: .constant(nil))
+    //DetailView(photoGet: PhotoGet(), selectPhoto: .constant(nil))
 }
 

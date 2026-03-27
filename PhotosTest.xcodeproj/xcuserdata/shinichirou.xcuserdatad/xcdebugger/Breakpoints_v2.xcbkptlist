@@ -18,36 +18,22 @@
             endingLineNumber = "24"
             landmarkName = "body"
             landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "6C107EB0-AF1E-4AB3-9197-3CCAC7D9D678 - 2aa87fac154e3545"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "PhotosTest.PhotosTestApp.body.getter : some"
-                  moduleName = "PhotosTest.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/shinichirou/Library/Mobile%20Documents/com~apple~CloudDocs/Project/PhotosTest/PhotosTest/PhotosTestApp.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "25"
-                  endingLineNumber = "25">
-               </Location>
-               <Location
-                  uuid = "6C107EB0-AF1E-4AB3-9197-3CCAC7D9D678 - 8b6b7947ec42643c"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; SwiftUI.NavigationSplitView&lt;PhotosTest.SidebarView, PhotosTest.ContentView, PhotosTest.DetailView&gt; in PhotosTest.PhotosTestApp.body.getter : some"
-                  moduleName = "PhotosTest.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/shinichirou/Library/Mobile%20Documents/com~apple~CloudDocs/Project/PhotosTest/PhotosTest/PhotosTestApp.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "26"
-                  endingLineNumber = "26">
-               </Location>
-            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "614A83A5-D126-4043-9FBC-030DF920A99F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PhotosTest/Views/ZoomableImage.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "53"
+            endingLineNumber = "53"
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
