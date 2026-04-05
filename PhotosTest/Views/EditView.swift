@@ -83,15 +83,7 @@ struct EditView: View {
                 
             }.padding(5)
             Section {
-                Text("説明")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                TextEditor(text: $comment)
-                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
-                    .textEditorStyle(.plain)
-                    .border(Color.gray)
-
-                Text("特徴")
+                Text("特徴（見分けるポイント）")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 TextEditor(text: $features)
@@ -99,82 +91,22 @@ struct EditView: View {
                     .textEditorStyle(.plain)
                     .border(Color.gray)
                 
-                Text("情報")
+                Text("情報（この植物一般に関する情報）")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 TextEditor(text: $info)
                     .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
                     .textEditorStyle(.plain)
                     .border(Color.gray)
-            }
-            /*
-            Section {
-                Text("説明")
+                
+                Text("コメント（この個体の情報）")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
-
                 TextEditor(text: $comment)
                     .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
                     .textEditorStyle(.plain)
                     .border(Color.gray)
-                    .listRowInsets(EdgeInsets()) // 必要に応じて
-
-                Text("特徴")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                TextEditor(text: $features)
-                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
-                    .textEditorStyle(.plain)
-                    .border(Color.gray)
-                    .listRowInsets(EdgeInsets())
             }
-            
-            Section {
-                Text("説明")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                TextEditor(text: $comment)
-                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
-                    .textEditorStyle(.plain)
-                    .border(Color.gray)
-                    .listRowInsets(EdgeInsets()) // 必要なら左右インセットを詰める
-
-                Text("特徴")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                TextEditor(text: $features)
-                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
-                    .textEditorStyle(.plain)
-                    .border(Color.gray)
-                    .listRowInsets(EdgeInsets())
-            }
-            
-            Section {
-                LabeledContent("説明") {
-                    TextEditor(text: $comment)
-                        .frame(maxWidth: .infinity, minHeight: 80, alignment: .leading)
-                        .textEditorStyle(.plain)
-                        .border(Color.gray)
-                }
-                LabeledContent("特徴") {
-                    TextEditor(text: $features)
-                        .frame(maxWidth: .infinity, minHeight: 80, alignment: .leading)
-                        .textEditorStyle(.plain)
-                        .border(Color.gray)
-                }
-            }
-             */
-/*
-            Section(header: Text("説明")) {
-                TextEditor(text: $comment).frame(height: 80).border(Color.gray)
-            }.padding(5)
-            Section(header: Text("特徴")) {
-                TextEditor(text: $features).frame(height: 80).border(Color.gray)
-            }.padding(5)
- */
         }
         .toolbar {
             ToolbarItem(placement: .confirmationAction, content: {
@@ -190,6 +122,7 @@ struct EditView: View {
                     photo.bloomSeasons = bloomSeasons
                     photo.features = features
                     photo.comment = comment
+                    photo.info = info
                     photo.plantCategory = plantCategory
                     photo.wiki = wikiPedia
                     photo.family = family

@@ -52,7 +52,6 @@ struct ContentView: View {
     private var photos: [Photo] {
         
         var photos: [Photo] = []
-        let index:Int? = selectedSidebarItem?.index
                 
         if selectedSidebarItem == nil {
             photos = photoGet.photos

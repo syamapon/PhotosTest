@@ -50,7 +50,7 @@ struct ZoomableImage: View {
                     scale = 1.0
                 }
             }
-            lastDoubleTapPoint = point
+            lastDoubleTapPoint = CGPoint(x: point.x, y: point.y)
         }
 
         /*

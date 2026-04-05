@@ -35,14 +35,27 @@ struct DetailView: View {
                 
                 HStack {
                     if let getNsImage = getImage(asset: _selectPhoto.asset) {
-                        ScrollView([.horizontal, .vertical]) {
-                            ZoomableImage(image: getNsImage, initImageSize: CGSize(width: 392, height: 550), lastDoubleTapPoint: $doubleClickPoint)
-                                //.frame(width: 392, height: 550)
-                                //.padding(5)
-                                .draggable(getNsImage)
+                        ScrollViewReader { proxy in
+                            
+                            ScrollView([.horizontal, .vertical]) {
+                                ZStack {
+                                    Color.red.frame(width:1, height: 1
+                                    ).id("anchor")
+                                        .position(x: doubleClickPoint.x, y: doubleClickPoint.y)
+                                    ZoomableImage(image: getNsImage, initImageSize: CGSize(width: 392, height: 550),
+                                                  lastDoubleTapPoint: $doubleClickPoint)
+                                    .draggable(getNsImage)
+                                }
+                            }
+                            .frame(width: 392, height: 550)
+                            .onChange(of: doubleClickPoint) { _, newPoint in
+                                // ダブルクリック位置が更新されたら、その近辺へスクロール
+                                withAnimation {
+                                    print("newPoint:\(newPoint.x),\(newPoint.y)")
+                                    proxy.scrollTo("anchor", anchor: .center)
+                                }
+                            }
                         }
-                        .frame(width: 392, height: 550)
-                        .padding(5)
                     }
                     VStack(alignment: .leading, spacing: 0) {
                         Grid {
@@ -148,10 +161,12 @@ struct DetailView: View {
                                 Text("\(_selectPhoto.comment ?? "")")
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
+                            /*
                             GridRow {
                                 Text("クリック位置")
-                                Text("\(doubleClickPoint.y), \(doubleClickPoint.x)")
+                                Text("\(doubleClickPoint.x), \(doubleClickPoint.y)")
                             }
+                             */
                         }.frame(maxWidth: .infinity, alignment: .topLeading)
                          .padding(2)
                         Divider().gridCellUnsizedAxes(.horizontal)
@@ -225,13 +240,15 @@ struct DetailView: View {
     func getImage(asset: PHAsset?) -> NSImage? {
         
         if let imgAssset = asset {
-            var getImage: NSImage?
+            // 写真から画像を取得するオプション
             let options = PHImageRequestOptions()
             options.deliveryMode = .highQualityFormat
             options.resizeMode = .exact
             options.isNetworkAccessAllowed = true
             options.isSynchronous = true
-            
+                  
+            // イメージデータの取得
+            var getImage: NSImage?
             PHImageManager.default().requestImage(
                 for: imgAssset,
                 targetSize: CGSize(width: 1000, height: 1400),

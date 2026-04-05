@@ -46,6 +46,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "closure #1 in closure #2 in closure #1 in closure #1 in closure #1 in DetailView.body.getter:DetailView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "newPoint">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "closure #1 in ZoomableImage.body.getter:ZoomableImage.swift">
          <PersistentStrings>
             <PersistentString
