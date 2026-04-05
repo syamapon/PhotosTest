@@ -11,7 +11,7 @@ import Photos
 
 struct PhotoThumbnail: View {
     
-    let asset: PHAsset
+    let asset: PHAsset?
     let size: CGSize
     
     @State private var image: NSImage?
@@ -33,13 +33,16 @@ struct PhotoThumbnail: View {
     }
     
     func loadImage() {
-        PHImageManager.default().requestImage(
-            for: asset,
-            targetSize: size,
-            contentMode: .aspectFill,
-            options: nil
-        ) { image, _ in
-            self.image = image
+        
+        if let forAsset = asset {
+            PHImageManager.default().requestImage(
+                for: forAsset,
+                targetSize: size,
+                contentMode: .aspectFill,
+                options: nil
+            ) { image, _ in
+                self.image = image
+            }
         }
     }
 }

@@ -18,6 +18,7 @@ struct EditView: View {
     
     /// タイトル入力
     @State private var inputName: String = ""
+    @FocusState private var isInputNameFocused: Bool
         
     /// 別名入力
     @State private var aliasName: String = ""
@@ -54,6 +55,34 @@ struct EditView: View {
         Form {
             Section() {
                 TextField("名前（カナ）", text: $inputName, prompt: Text("名前（カナ）を入力してください")).padding(5)
+                    .focused($isInputNameFocused)
+                    .onChange(of: isInputNameFocused) { focused in
+                        if focused == false {
+                            // フォーカスが外れたタイミングで行いたい処理
+                            //validateName()
+                            print("kana input2.")
+                            
+                            var getPhoto: Photo = Photo(setImage: nil)
+                            getPhoto.title = self.inputName
+                                                        
+                            do {
+                                // 設定済みの項目を転記
+                                try getPhoto.setData()
+                                kanjiName = getPhoto.kanjiName ?? ""
+                                inputUrl = getPhoto.url ?? ""
+                                aliasName = getPhoto.aliasName ?? ""
+                                bloomSeasons = getPhoto.bloomSeasons
+                                features = getPhoto.features ?? ""
+                                info = getPhoto.info ?? ""
+                                wikiPedia = getPhoto.wiki ?? ""
+                                family = getPhoto.family ?? ""
+                                
+                                
+                            } catch {
+                                print("Error. setData")
+                            }
+                         }
+                    }
                 TextField("名前（漢字）", text: $kanjiName, prompt: Text("名前（漢字）を入力してください"))
                 TextField("別名", text: $aliasName, prompt: Text("別名を入力してください"))
                 TextField("URL", text: $inputUrl, prompt: Text("URLを入力してください"))

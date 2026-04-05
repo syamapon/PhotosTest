@@ -18,21 +18,21 @@ class Photo: Identifiable, Hashable {
     let tblNameInfo: String = "plantsInfo"
     
     /// オブジェクトに紐づく写真
-    let asset: PHAsset
+    let asset: PHAsset?
     
     /// 撮影日
     var creationDate: Date? {
-        return asset.creationDate
+        return asset?.creationDate
     }
     
     /// 写真を撮影した緯度
     var locLatitude: CLLocationDegrees? {
-        return self.asset.location?.coordinate.latitude
+        return self.asset?.location?.coordinate.latitude
     }
     
     /// 写真を撮影した経度
     var locLongitude: CLLocationDegrees? {
-        return self.asset.location?.coordinate.longitude
+        return self.asset?.location?.coordinate.longitude
     }
     
     // 登録されているアルバムのタイトル
@@ -101,7 +101,7 @@ class Photo: Identifiable, Hashable {
     
     /// イニシャライザ
     /// - Parameter asset: 写真
-    init(setImage asset: PHAsset) {
+    init(setImage asset: PHAsset?) {
         
         // 写真データ
         self.asset = asset
@@ -274,14 +274,6 @@ class Photo: Identifiable, Hashable {
             t.column(features)
             t.column(info)
         })
-        
-        // Build a type-safe filter compaSring Expression<String> to String
-
-        
-        // Example: iterate results (optional)
-        //for plant in try db.prepare(select) {
-        //    print(plant[id], plant[createdAt] ?? "Not set", plant[title])
-        //}
         
         // plants
         var select = plants.filter(id == self.id)

@@ -173,7 +173,19 @@ struct DetailView: View {
                         
                         Button("編集") { isShowUpdateDlg.toggle()}
                                 .sheet(isPresented: $isShowUpdateDlg, onDismiss: {}) {
-                                EditView(selectPhoto: $selectPhoto, isShowUpdateDlg: $isShowUpdateDlg   )
+                                    EditView(selectPhoto: $selectPhoto, isShowUpdateDlg: $isShowUpdateDlg).onDisappear {
+                                        print("disAppear")
+                                        for photo in sameNamePhotos {
+                                            photo.kanjiName = selectPhoto?.kanjiName
+                                            photo.url = selectPhoto?.url
+                                            photo.aliasName = selectPhoto?.aliasName
+                                            photo.bloomSeasons = selectPhoto?.bloomSeasons ?? []
+                                            photo.wiki = selectPhoto?.wiki ?? ""
+                                            photo.info = selectPhoto?.info ?? ""
+                                            photo.features = selectPhoto?.features ?? ""
+                                            
+                                        }
+                                    }
                             }.frame(maxWidth: .infinity, alignment:.trailing)
                             .padding(10)
                         
