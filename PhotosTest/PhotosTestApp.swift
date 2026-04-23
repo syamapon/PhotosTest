@@ -10,7 +10,6 @@ import SwiftUI
 @main
 struct PhotosTestApp: App {
     
-    
     /// 写真アクセスクラス
     @StateObject private var photoGet = PhotoGet()
     
@@ -19,6 +18,12 @@ struct PhotosTestApp: App {
     
     /// 選択されている写真
     @State var selectPhoto: Photo? = nil
+    
+    init() {
+        //photoGet.setPhotos()
+        
+        //photoGet.setPhotoDatas()
+    }
     
     var body: some Scene {
         WindowGroup {

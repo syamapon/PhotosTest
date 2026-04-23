@@ -38,7 +38,7 @@ class PhotoGet :ObservableObject {
                 
                 // 内部で保持する、写真データ配列
                 var fetchedPhotos: [Photo] = []
-                
+                                
                 // 読み込んだアルバムの数だけループ
                 for i in 0..<albumCollection.count {
                     
@@ -62,18 +62,12 @@ class PhotoGet :ObservableObject {
                         let _photo = Photo(setImage: asset)
                         _photo.albumTitle = album.localizedTitle
                         
-                        // DBをもとにデータ設定
-                        do {
-                            try _photo.setData()
-                            
-                            // 写真リストに追加
-                            fetchedPhotos.append(_photo)
-                        }
-                        catch {
-                            print ("Photo SetData Error: \(error)")
-                        }
+                        // 写真リストに追加
+                        fetchedPhotos.append(_photo)
                     }
                 }
+                
+                self.setPhotoDatas(fetchedPhotos)
                 
                 DispatchQueue.main.async {
                     // ここで @Published / @StateObject が持つ状態を更新する
@@ -86,6 +80,47 @@ class PhotoGet :ObservableObject {
                 print("アクセス不可(restricted)")
             default:
                 break
+            }
+        }
+    }
+    
+    struct PhotoData: Decodable {
+        let id: String
+        let createdAt: String
+        let title: String?
+        let comment: String?
+        let category: String?
+    }
+        
+    /// 写真から取得したデータにデータ設定を行う
+    /// - Parameter photos: 取得済みの写真データリスト
+    func setPhotoDatas(_ photos: [Photo]) {
+
+        // データ取得URL作成
+        guard let url = URL(string: "http://127.0.0.1:8080/plants") else {
+            print("Invalid URL")
+            return
+        }
+
+        // データ取得
+        var dtos = [PhotoData]()
+        Task {
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                dtos = try JSONDecoder().decode([PhotoData].self, from: data)
+                
+                for dto in dtos {
+                                        
+                    if let setData = photos.filter { $0.id == dto.id }.first {
+                        setData.title = dto.title
+                        setData.comment = dto.comment
+                    }
+                    print("id:\(dto.id),title:\(dto.title ?? "nil"),comment:\(dto.comment ?? "nil")")
+                }
+                
+
+            } catch {
+                print("Failed to fetch photos: \(error)")
             }
         }
     }

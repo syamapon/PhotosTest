@@ -107,6 +107,7 @@ class Photo: Identifiable, Hashable {
         self.asset = asset
     }
     
+   
     static func == (lhs: Photo, rhs: Photo) -> Bool {
         lhs.id == rhs.id
     }
@@ -297,7 +298,7 @@ class Photo: Identifiable, Hashable {
             select = plantsInfo.filter(infoTitle == _title)
             
             if let plantInfo = try db.pluck(select) {
-                
+                    
                 self.aliasName = plantInfo[aliasName]
                 self.kanjiName = plantInfo[kanjiName]
                 self.url = plantInfo[url]
