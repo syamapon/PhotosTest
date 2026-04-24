@@ -150,6 +150,10 @@ class Photo: Identifiable, Hashable {
     ///
     func storeData() throws {
         
+        
+        
+        
+        
         // plantsテーブルを更新
         let dbPath = try databaseURL().path
         let db = try Connection(dbPath)

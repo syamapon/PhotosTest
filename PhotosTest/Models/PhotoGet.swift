@@ -14,6 +14,10 @@ class PhotoGet :ObservableObject {
     
     // 写真リスト
     @Published var photos: [Photo] = []
+    
+    
+    /// データ取得URL
+    private let baseURL = URL(string: "http://127.0.0.1:8080")!
         
     /// イニシャライザ
     init()
@@ -84,7 +88,17 @@ class PhotoGet :ObservableObject {
         }
     }
     
-    struct PhotoData: Decodable {
+    /// データ取得用
+    struct GetPhtotoData: Decodable {
+        let id: String
+        let createdAt: String
+        let title: String?
+        let comment: String?
+        let category: String?
+    }
+    
+    /// データ作成・更新用
+    struct UpdatePhotoData: Codable {
         let id: String
         let createdAt: String
         let title: String?
@@ -97,17 +111,14 @@ class PhotoGet :ObservableObject {
     func setPhotoDatas(_ photos: [Photo]) {
 
         // データ取得URL作成
-        guard let url = URL(string: "http://127.0.0.1:8080/plants") else {
-            print("Invalid URL")
-            return
-        }
+        let url = baseURL.appendingPathComponent("plants")
 
         // データ取得
-        var dtos = [PhotoData]()
+        var dtos = [GetPhtotoData]()
         Task {
             do {
                 let (data, _) = try await URLSession.shared.data(from: url)
-                dtos = try JSONDecoder().decode([PhotoData].self, from: data)
+                dtos = try JSONDecoder().decode([GetPhtotoData].self, from: data)
                 
                 for dto in dtos {
                                         
@@ -118,11 +129,60 @@ class PhotoGet :ObservableObject {
                     print("id:\(dto.id),title:\(dto.title ?? "nil"),comment:\(dto.comment ?? "nil")")
                 }
                 
-
             } catch {
                 print("Failed to fetch photos: \(error)")
             }
         }
+    }
+    
+    func insertPhotoData(_ photo: Photo) {
+        
+        let url = baseURL.appendingPathComponent("plants")
+        
+        // 日付取得
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        var dateString:String = ""
+        if let cDate = photo.creationDate {
+            dateString = formatter.string(from: cDate)
+        }
+            
+        let updateData = UpdatePhotoData(id: photo.id,
+                                         createdAt: dateString,
+                                         title: photo.title,
+                                         comment: photo.comment,
+                                         category: "")
+        
+        
+        do {
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            let jsonData = try JSONEncoder().encode(updateData)
+            request.httpBody = jsonData
+            
+            Task {
+                let (data, response) = try await URLSession.shared.data(for: request)
+                //try validate(response: response)
+
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                _ = try decoder.decode(GetPhtotoData.self, from: data)
+            }
+            
+            /*
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    print("Error task data: \(error)")
+                }
+            }
+             */
+        }
+        catch {
+            print("Error posting data: \(error)")
+        }
+
     }
 }
 

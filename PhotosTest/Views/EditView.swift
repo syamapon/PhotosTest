@@ -11,6 +11,9 @@ import SwiftUI
 /// 入力画面
 struct EditView: View {
     
+    /// 写真データ取得
+    @ObservedObject var photoGet : PhotoGet
+    
     @Binding var selectPhoto: Photo?
     
     @Binding var isShowUpdateDlg: Bool
@@ -157,7 +160,8 @@ struct EditView: View {
                     photo.family = family
                                         
                     do {
-                        try photo.storeData()
+                        //try photo.storeData()
+                        photoGet.insertPhotoData(photo)
                     }
                     catch {
                         print("Error saving photo: \(error.localizedDescription)")
@@ -199,8 +203,12 @@ struct EditView: View {
 }
 
 #Preview {
+    /*
     EditView(
+        /// 写真データ取得
+        photoGet: .constant(nil),
         selectPhoto: .constant(nil),
         isShowUpdateDlg: .constant(true)
     )
+     */
 }

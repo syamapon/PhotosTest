@@ -38,10 +38,26 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "PhotoGet.insertPhotoData(_:):PhotoGet.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "photo.id">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "closure #1 in closure #1 in DetailView.body.getter:DetailView.swift">
          <PersistentStrings>
             <PersistentString
                value = "nCnt">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in closure #2 in EditView.body.getter:EditView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "photo.id">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
