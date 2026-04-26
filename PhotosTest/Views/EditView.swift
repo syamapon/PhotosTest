@@ -161,7 +161,16 @@ struct EditView: View {
                                         
                     do {
                         //try photo.storeData()
-                        photoGet.insertPhotoData(photo)
+                        
+                        Task {
+                            let _setPhoto = await photoGet.getSetPhotoData(ID: photo.id)
+                            if (_setPhoto != nil) {
+                                photoGet.updatePhoto(ID: photo.id, data: photo)
+                            }
+                            else {
+                                photoGet.insertPhoto(data: photo)
+                            }
+                        }
                     }
                     catch {
                         print("Error saving photo: \(error.localizedDescription)")

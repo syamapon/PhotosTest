@@ -29,6 +29,7 @@ struct ContentView: View {
             HStack {
                 TextField("検索", text: $searchName, prompt: Text("植物の名前を入力してください"))
                 Button(action: {searchName = ""}, label: {Text("クリア")})
+                Button(action: {photoGet.setPhotos()}, label: {Text("リロード")})
             }
             List(photos, selection: $selectPhoto) { entry in
                 NavigationLink(value: entry) {

@@ -88,13 +88,27 @@ class PhotoGet :ObservableObject {
         }
     }
     
-    /// データ取得用
-    struct GetPhtotoData: Decodable {
+    /// データ取得用(Plants)
+    struct GetPhotoData: Decodable {
         let id: String
         let createdAt: String
         let title: String?
         let comment: String?
         let category: String?
+    }
+    
+    /// データ取得用(PlantsInfo)
+    struct GetPhotoInfoData: Decodable {
+        let id: String
+        //let title: String
+        let aliasName: String?
+        let kanjiName: String?
+        let url: String?
+        let wiki: String?
+        let family: String?
+        let bloomSeansons: String?
+        let features: String?
+        let info: String?        
     }
     
     /// データ作成・更新用
@@ -111,22 +125,41 @@ class PhotoGet :ObservableObject {
     func setPhotoDatas(_ photos: [Photo]) {
 
         // データ取得URL作成
-        let url = baseURL.appendingPathComponent("plants")
+        let urlPlants = baseURL.appendingPathComponent("plants")
+        let urlPlantsInfo = baseURL.appendingPathComponent("plantsInfo")
 
         // データ取得
-        var dtos = [GetPhtotoData]()
+        var getPhotoDatas = [GetPhotoData]()
+        var getPhotoInfoDatas = [GetPhotoInfoData]()
+        
         Task {
             do {
-                let (data, _) = try await URLSession.shared.data(from: url)
-                dtos = try JSONDecoder().decode([GetPhtotoData].self, from: data)
+                // Plantsテーブルからデータ取得
+                let (data, _) = try await URLSession.shared.data(from: urlPlants)
+                getPhotoDatas = try JSONDecoder().decode([GetPhotoData].self, from: data)
                 
-                for dto in dtos {
+                // PlantsInfoテーブルからデータ取得
+                let (dataPlantsInfo, _) = try await URLSession.shared.data(from: urlPlantsInfo)
+                getPhotoInfoDatas = try JSONDecoder().decode([GetPhotoInfoData].self, from: dataPlantsInfo)
+                
+                
+                for getPhotoData in getPhotoDatas {
                                         
-                    if let setData = photos.filter { $0.id == dto.id }.first {
-                        setData.title = dto.title
-                        setData.comment = dto.comment
+                    if let setData = photos.filter { $0.id == getPhotoData.id }.first {
+                        setData.title = getPhotoData.title
+                        setData.comment = getPhotoData.comment
+                        
+                        if let setInfoData = getPhotoInfoDatas.filter { $0.id == setData.title}.first {
+                            setData.aliasName = setInfoData.aliasName
+                            setData.kanjiName = setInfoData.kanjiName
+                            setData.url = setInfoData.url
+                            setData.wiki = setInfoData.wiki
+                            setData.family = setInfoData.family
+                            setData.features = setInfoData.features
+                            setData.info = setInfoData.info
+                        }
                     }
-                    print("id:\(dto.id),title:\(dto.title ?? "nil"),comment:\(dto.comment ?? "nil")")
+                    print("id:\(getPhotoData.id),title:\(getPhotoData.title ?? "nil"),comment:\(getPhotoData.comment ?? "nil")")
                 }
                 
             } catch {
@@ -135,7 +168,92 @@ class PhotoGet :ObservableObject {
         }
     }
     
-    func insertPhotoData(_ photo: Photo) {
+    
+    /// IDを指定して、写真データを取得します
+    /// - Parameter id: データを示すID
+    /// - Returns:  IDに紐づく写真データが存在する場合は写真データを返す
+    func getSetPhotoData(ID id: String) async -> Photo? {
+        
+        let photo = photos.filter({$0.id == id}).first
+        
+        if (photo != nil) {
+            let url = baseURL.appendingPathComponent("plants").appendingPathComponent(id)
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                let dto = try JSONDecoder().decode(GetPhotoData.self, from: data)
+                let cDate = getCreatedAt(from: dto.createdAt)
+                
+                photo!.title = dto.self.title
+
+            } catch {
+                // DBからデータを取得できないケース
+                print("Failed to fetch photo by id: \(error)")
+                return nil
+            }
+        }
+        
+        return photo
+    }
+    
+    
+    /// 日付を文字列から取得
+    /// - Parameter dateString: 日付を表す文字列
+    /// - Returns: 文字列が示す日付
+    func getCreatedAt(from dateString: String) -> Date? {
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let cdate = formatter.date(from: dateString)
+        
+        return cdate
+    }
+    
+    /// 写真データを更新します
+    /// - Parameter photo: 更新データ
+    func updatePhoto(ID id: String, data photo: Photo) {
+        
+        let url = baseURL.appendingPathComponent("plants").appendingPathComponent(id)
+        
+        // 日付取得
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        var dateString:String = ""
+        if let cDate = photo.creationDate {
+            dateString = formatter.string(from: cDate)
+        }
+            
+        let updateData = UpdatePhotoData(id: photo.id,
+                                         createdAt: dateString,
+                                         title: photo.title,
+                                         comment: photo.comment,
+                                         category: "")
+        
+        do {
+            var request = URLRequest(url: url)
+            request.httpMethod = "PUT"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            let jsonData = try JSONEncoder().encode(updateData)
+            request.httpBody = jsonData
+            
+            Task {
+                let (data, response) = try await URLSession.shared.data(for: request)
+                //try validate(response: response)
+
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                _ = try decoder.decode(GetPhotoData.self, from: data)
+            }
+            
+        }
+        catch {
+            print("Error posting data: \(error)")
+        }
+    }
+    
+    /// 写真データを登録します
+    /// - Parameter photo: 写真データ
+    func insertPhoto(data photo: Photo) {
         
         let url = baseURL.appendingPathComponent("plants")
         
@@ -153,7 +271,6 @@ class PhotoGet :ObservableObject {
                                          comment: photo.comment,
                                          category: "")
         
-        
         do {
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
@@ -168,16 +285,9 @@ class PhotoGet :ObservableObject {
 
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
-                _ = try decoder.decode(GetPhtotoData.self, from: data)
+                _ = try decoder.decode(GetPhotoData.self, from: data)
             }
             
-            /*
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                if let error = error {
-                    print("Error task data: \(error)")
-                }
-            }
-             */
         }
         catch {
             print("Error posting data: \(error)")

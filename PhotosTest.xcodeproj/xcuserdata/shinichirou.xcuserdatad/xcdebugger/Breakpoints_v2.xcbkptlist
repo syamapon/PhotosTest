@@ -3,4 +3,128 @@
    uuid = "06299806-B265-4127-90FB-C508C0568B4A"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FFD39131-B122-4E93-AB96-000C0553D31E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PhotosTest/Models/PhotoGet.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "146"
+            endingLineNumber = "146"
+            landmarkName = "setPhotoDatas(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D771B290-53B5-4EE0-B9C9-9D189D651941"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PhotosTest/Models/PhotoGet.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "138"
+            endingLineNumber = "138"
+            landmarkName = "setPhotoDatas(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "07C9081B-2699-48B8-B1E0-E07BF868AA83"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PhotosTest/Models/PhotoGet.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "166"
+            endingLineNumber = "166"
+            landmarkName = "setPhotoDatas(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "07C9081B-2699-48B8-B1E0-E07BF868AA83 - ef667e121a362465"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 () async -&gt; () in PhotosTest.PhotoGet.setPhotoDatas(Swift.Array&lt;PhotosTest.Photo&gt;) -&gt; ()"
+                  moduleName = "PhotosTest.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shinichirou/Library/Mobile%20Documents/com~apple~CloudDocs/Project/PhotosTest/PhotosTest/Models/PhotoGet.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "166"
+                  endingLineNumber = "166">
+               </Location>
+               <Location
+                  uuid = "07C9081B-2699-48B8-B1E0-E07BF868AA83 - 9f4c9106ea4cf063"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for closure #1 () async -&gt; () in PhotosTest.PhotoGet.setPhotoDatas(Swift.Array&lt;PhotosTest.Photo&gt;) -&gt; ()"
+                  moduleName = "PhotosTest.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shinichirou/Library/Mobile%20Documents/com~apple~CloudDocs/Project/PhotosTest/PhotosTest/Models/PhotoGet.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "166"
+                  endingLineNumber = "166">
+               </Location>
+               <Location
+                  uuid = "07C9081B-2699-48B8-B1E0-E07BF868AA83 - 57219d8332401a62"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(6) suspend resume partial function for closure #1 () async -&gt; () in PhotosTest.PhotoGet.setPhotoDatas(Swift.Array&lt;PhotosTest.Photo&gt;) -&gt; ()"
+                  moduleName = "PhotosTest.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shinichirou/Library/Mobile%20Documents/com~apple~CloudDocs/Project/PhotosTest/PhotosTest/Models/PhotoGet.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "166"
+                  endingLineNumber = "166">
+               </Location>
+               <Location
+                  uuid = "07C9081B-2699-48B8-B1E0-E07BF868AA83 - f1a880d7a45bc61"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(7) suspend resume partial function for closure #1 () async -&gt; () in PhotosTest.PhotoGet.setPhotoDatas(Swift.Array&lt;PhotosTest.Photo&gt;) -&gt; ()"
+                  moduleName = "PhotosTest.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shinichirou/Library/Mobile%20Documents/com~apple~CloudDocs/Project/PhotosTest/PhotosTest/Models/PhotoGet.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "166"
+                  endingLineNumber = "166">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EFB626CC-5463-46B0-B1F2-F895BF85DF9C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PhotosTest/Models/PhotoGet.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "153"
+            endingLineNumber = "153"
+            landmarkName = "setPhotoDatas(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

@@ -207,6 +207,9 @@ struct DetailView: View {
                             }
                         }
                     }.frame(maxWidth: .infinity, alignment:.init(horizontal: .leading, vertical: .top))
+                        .onAppear {
+                            print("onAppear")
+                        }
                 }
                 Map(position: $cameraPosition) {
                     if let photo = selectPhoto {
