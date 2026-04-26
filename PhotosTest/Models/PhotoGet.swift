@@ -17,7 +17,7 @@ class PhotoGet :ObservableObject {
     
     
     /// データ取得URL
-    private let baseURL = URL(string: "http://127.0.0.1:8080")!
+    private let baseURL = URL(string: "http://192.168.3.4:8080")!
         
     /// イニシャライザ
     init()
