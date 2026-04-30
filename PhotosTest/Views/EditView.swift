@@ -65,6 +65,9 @@ struct EditView: View {
                             //validateName()
                             print("kana input2.")
                             
+                            
+                            
+                            /*
                             var getPhoto: Photo = Photo(setImage: nil)
                             getPhoto.title = self.inputName
                                                         
@@ -84,6 +87,7 @@ struct EditView: View {
                             } catch {
                                 print("Error. setData")
                             }
+                             */
                          }
                     }
                 TextField("名前（漢字）", text: $kanjiName, prompt: Text("名前（漢字）を入力してください"))
@@ -163,7 +167,7 @@ struct EditView: View {
                         //try photo.storeData()
                         
                         Task {
-                            let _setPhoto = await photoGet.getSetPhotoData(ID: photo.id)
+                            let _setPhoto = await photoGet.getPhotoDataByDB(ID: photo.id)
                             if (_setPhoto != nil) {
                                 photoGet.updatePhoto(ID: photo.id, data: photo)
                             }

@@ -20,9 +20,6 @@ struct PhotosTestApp: App {
     @State var selectPhoto: Photo? = nil
     
     init() {
-        //photoGet.setPhotos()
-        
-        //photoGet.setPhotoDatas()
     }
     
     var body: some Scene {

@@ -17,7 +17,7 @@ class PhotoGet :ObservableObject {
     
     
     /// データ取得URL
-    private let baseURL = URL(string: "http://192.168.3.4:8080")!
+    private let baseURL = URL(string: "http://192.168.3.8:8080")!
         
     /// イニシャライザ
     init()
@@ -88,8 +88,13 @@ class PhotoGet :ObservableObject {
         }
     }
     
+    struct GetPhoto : Decodable {
+        let plant: GetPlant?
+        let plantInfo: GetPlantInfo?
+    }
+    
     /// データ取得用(Plants)
-    struct GetPhotoData: Decodable {
+    struct GetPlant: Decodable {
         let id: String
         let createdAt: String
         let title: String?
@@ -98,7 +103,7 @@ class PhotoGet :ObservableObject {
     }
     
     /// データ取得用(PlantsInfo)
-    struct GetPhotoInfoData: Decodable {
+    struct GetPlantInfo: Decodable {
         let id: String
         //let title: String
         let aliasName: String?
@@ -125,43 +130,34 @@ class PhotoGet :ObservableObject {
     func setPhotoDatas(_ photos: [Photo]) {
 
         // データ取得URL作成
-        let urlPlants = baseURL.appendingPathComponent("plants")
-        let urlPlantsInfo = baseURL.appendingPathComponent("plantsInfo")
-
-        // データ取得
-        var getPhotoDatas = [GetPhotoData]()
-        var getPhotoInfoDatas = [GetPhotoInfoData]()
+        let urlPhotos = baseURL.appendingPathComponent("photos")
+        // データ取得域
+        var getPhotos: [GetPhoto] = []
         
         Task {
             do {
-                // Plantsテーブルからデータ取得
-                let (data, _) = try await URLSession.shared.data(from: urlPlants)
-                getPhotoDatas = try JSONDecoder().decode([GetPhotoData].self, from: data)
-                
-                // PlantsInfoテーブルからデータ取得
-                let (dataPlantsInfo, _) = try await URLSession.shared.data(from: urlPlantsInfo)
-                getPhotoInfoDatas = try JSONDecoder().decode([GetPhotoInfoData].self, from: dataPlantsInfo)
-                
-                
-                for getPhotoData in getPhotoDatas {
-                                        
-                    if let setData = photos.filter { $0.id == getPhotoData.id }.first {
-                        setData.title = getPhotoData.title
-                        setData.comment = getPhotoData.comment
-                        
-                        if let setInfoData = getPhotoInfoDatas.filter { $0.id == setData.title}.first {
-                            setData.aliasName = setInfoData.aliasName
-                            setData.kanjiName = setInfoData.kanjiName
-                            setData.url = setInfoData.url
-                            setData.wiki = setInfoData.wiki
-                            setData.family = setInfoData.family
-                            setData.features = setInfoData.features
-                            setData.info = setInfoData.info
+                // Photoデータをサーバから取得
+                let (photoData, _) = try await URLSession.shared.data(from: urlPhotos)
+                getPhotos = try JSONDecoder().decode([GetPhoto].self, from: photoData)
+                                
+                // 取得データを元にループして、写真データに設定
+                for getPhoto in getPhotos {
+                    if let setData = photos.filter { $0.id == getPhoto.plant?.id ?? ""}.first {
+                        // 植物個体情報を設定
+                        setData.title = getPhoto.plant?.title ?? ""
+                        setData.comment = getPhoto.plant?.comment ?? ""
+                        // 植物情報を設定
+                        if let plantInfo = getPhoto.plantInfo {
+                            setData.aliasName = plantInfo.aliasName
+                            setData.kanjiName = plantInfo.kanjiName
+                            setData.url = plantInfo.url
+                            setData.wiki = plantInfo.wiki
+                            setData.family = plantInfo.family
+                            setData.features = plantInfo.features
+                            setData.info = plantInfo.info
                         }
                     }
-                    print("id:\(getPhotoData.id),title:\(getPhotoData.title ?? "nil"),comment:\(getPhotoData.comment ?? "nil")")
-                }
-                
+                }                
             } catch {
                 print("Failed to fetch photos: \(error)")
             }
@@ -172,15 +168,16 @@ class PhotoGet :ObservableObject {
     /// IDを指定して、写真データを取得します
     /// - Parameter id: データを示すID
     /// - Returns:  IDに紐づく写真データが存在する場合は写真データを返す
-    func getSetPhotoData(ID id: String) async -> Photo? {
+    func getPhotoDataByDB(ID id: String) async -> Photo? {
         
+        // Photoアプリから取得
         let photo = photos.filter({$0.id == id}).first
         
         if (photo != nil) {
             let url = baseURL.appendingPathComponent("plants").appendingPathComponent(id)
             do {
                 let (data, _) = try await URLSession.shared.data(from: url)
-                let dto = try JSONDecoder().decode(GetPhotoData.self, from: data)
+                let dto = try JSONDecoder().decode(GetPlant.self, from: data)
                 let cDate = getCreatedAt(from: dto.createdAt)
                 
                 photo!.title = dto.self.title
@@ -242,7 +239,7 @@ class PhotoGet :ObservableObject {
 
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
-                _ = try decoder.decode(GetPhotoData.self, from: data)
+                _ = try decoder.decode(GetPlant.self, from: data)
             }
             
         }
@@ -285,7 +282,7 @@ class PhotoGet :ObservableObject {
 
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
-                _ = try decoder.decode(GetPhotoData.self, from: data)
+                _ = try decoder.decode(GetPlant.self, from: data)
             }
             
         }
