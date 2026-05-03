@@ -116,6 +116,35 @@ class PhotoGet :ObservableObject {
         let info: String?        
     }
     
+    /// 更新用写真データ
+    struct UpdatePhoto: Codable {
+        let updatePlant: UpdatePlant
+        let updatePlantInfo: UpdatePlantInfo?
+    }
+    
+    /// 更新用植物個体データ
+    struct UpdatePlant: Codable {
+        let id: String
+        let createdAt: String
+        let title: String?
+        let comment: String?
+        let category: String?
+    }
+    
+    /// 更新用植物共通データ
+    struct UpdatePlantInfo: Codable {
+        let id: String
+        //let title: String
+        let aliasName: String?
+        let kanjiName: String?
+        let url: String?
+        let wiki: String?
+        let family: String?
+        let bloomSeansons: String?
+        let features: String?
+        let info: String?
+    }
+    
     /// データ作成・更新用
     struct UpdatePhotoData: Codable {
         let id: String
@@ -157,7 +186,7 @@ class PhotoGet :ObservableObject {
                             setData.info = plantInfo.info
                         }
                     }
-                }                
+                }
             } catch {
                 print("Failed to fetch photos: \(error)")
             }
@@ -206,10 +235,11 @@ class PhotoGet :ObservableObject {
     }
     
     /// 写真データを更新します
+    /// - Parameter id: 更新キー
     /// - Parameter photo: 更新データ
     func updatePhoto(ID id: String, data photo: Photo) {
         
-        let url = baseURL.appendingPathComponent("plants").appendingPathComponent(id)
+        let url = baseURL.appendingPathComponent("photo").appendingPathComponent(id)
         
         // 日付取得
         let formatter = DateFormatter()
@@ -219,18 +249,20 @@ class PhotoGet :ObservableObject {
             dateString = formatter.string(from: cDate)
         }
             
-        let updateData = UpdatePhotoData(id: photo.id,
-                                         createdAt: dateString,
-                                         title: photo.title,
-                                         comment: photo.comment,
-                                         category: "")
-        
+        // 更新データ作成
+        let updatePlant = UpdatePlant(id: photo.id, createdAt: dateString, title: photo.title, comment: photo.comment, category:nil)
+        var updatePlantInfo: UpdatePlantInfo? = nil
+        if let photoTitle = updatePlant.title {
+            updatePlantInfo = UpdatePlantInfo(id: photoTitle, aliasName: photo.aliasName, kanjiName: photo.kanjiName, url: photo.url, wiki: photo.wiki, family: photo.family, bloomSeansons: nil, features: photo.features, info: photo.info)
+        }
+        let updatePhoto = UpdatePhoto(updatePlant: updatePlant, updatePlantInfo: updatePlantInfo)
+               
         do {
             var request = URLRequest(url: url)
             request.httpMethod = "PUT"
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             
-            let jsonData = try JSONEncoder().encode(updateData)
+            let jsonData = try JSONEncoder().encode(updatePhoto)
             request.httpBody = jsonData
             
             Task {
@@ -239,7 +271,7 @@ class PhotoGet :ObservableObject {
 
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
-                _ = try decoder.decode(GetPlant.self, from: data)
+                _ = try decoder.decode(GetPhoto.self, from: data)
             }
             
         }
@@ -252,8 +284,12 @@ class PhotoGet :ObservableObject {
     /// - Parameter photo: 写真データ
     func insertPhoto(data photo: Photo) {
         
-        let url = baseURL.appendingPathComponent("plants")
-        
+        // タイトル未設定の場合はスルー
+        guard photo.title != nil else {
+            print("Not set title")
+            return
+        }
+
         // 日付取得
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -262,18 +298,19 @@ class PhotoGet :ObservableObject {
             dateString = formatter.string(from: cDate)
         }
             
-        let updateData = UpdatePhotoData(id: photo.id,
-                                         createdAt: dateString,
-                                         title: photo.title,
-                                         comment: photo.comment,
-                                         category: "")
-        
+        // 登録データ作成
+        let updatePlantInfo = UpdatePlantInfo(id: photo.title!, aliasName: photo.aliasName, kanjiName: photo.kanjiName, url: photo.url, wiki: photo.wiki, family: photo.family, bloomSeansons: nil, features: photo.features, info: photo.info)
+        let updatePlant = UpdatePlant(id: photo.id, createdAt: dateString, title: photo.title, comment: photo.comment, category: nil)
+        let updatePhoto = UpdatePhoto(updatePlant: updatePlant, updatePlantInfo: updatePlantInfo)
+
+        // DB登録
+        let url = baseURL.appendingPathComponent("photo")
         do {
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             
-            let jsonData = try JSONEncoder().encode(updateData)
+            let jsonData = try JSONEncoder().encode(updatePhoto)
             request.httpBody = jsonData
             
             Task {
@@ -282,7 +319,7 @@ class PhotoGet :ObservableObject {
 
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
-                _ = try decoder.decode(GetPlant.self, from: data)
+                _ = try decoder.decode(GetPhoto.self, from: data)
             }
             
         }
