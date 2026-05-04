@@ -18,20 +18,20 @@ class PhotoGet :ObservableObject {
     
     /// データ取得URL
     private let baseURL = URL(string: "http://192.168.3.8:8080")!
-        
+    
     /// イニシャライザ
     init()
     {
         setPhotos()
     }
-        
+    
     /// アルバム画像の読み込み
     func setPhotos() {
         
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
             switch status {
             case .authorized, .limited:
-               
+                
                 // アルバム(花・木・植物）を取得
                 let fetchOptions = PHFetchOptions()
                 fetchOptions.predicate = NSPredicate(format: "title IN %@", ["植物"])
@@ -42,7 +42,7 @@ class PhotoGet :ObservableObject {
                 
                 // 内部で保持する、写真データ配列
                 var fetchedPhotos: [Photo] = []
-                                
+                
                 // 読み込んだアルバムの数だけループ
                 for i in 0..<albumCollection.count {
                     
@@ -61,7 +61,7 @@ class PhotoGet :ObservableObject {
                     assets.enumerateObjects { asset, idx, _ in
                         
                         print("Album:\(album.localizedTitle ?? "NoTitle")　Photo:\(idx + 1)")
-
+                        
                         // 写真をもとにデータ設定
                         let _photo = Photo(setImage: asset)
                         _photo.albumTitle = album.localizedTitle
@@ -88,7 +88,8 @@ class PhotoGet :ObservableObject {
         }
     }
     
-    struct GetPhoto : Decodable {
+    /// データ取得用写真データ
+    struct GetPlantPhoto : Decodable {
         let plant: GetPlant?
         let plantInfo: GetPlantInfo?
     }
@@ -111,13 +112,13 @@ class PhotoGet :ObservableObject {
         let url: String?
         let wiki: String?
         let family: String?
-        let bloomSeansons: String?
+        let bloomSeasons: String?
         let features: String?
-        let info: String?        
+        let info: String?
     }
     
     /// 更新用写真データ
-    struct UpdatePhoto: Codable {
+    struct UpdatePlantPhoto: Codable {
         let updatePlant: UpdatePlant
         let updatePlantInfo: UpdatePlantInfo?
     }
@@ -145,36 +146,28 @@ class PhotoGet :ObservableObject {
         let info: String?
     }
     
-    /// データ作成・更新用
-    struct UpdatePhotoData: Codable {
-        let id: String
-        let createdAt: String
-        let title: String?
-        let comment: String?
-        let category: String?
-    }
-        
     /// 写真から取得したデータにデータ設定を行う
     /// - Parameter photos: 取得済みの写真データリスト
     func setPhotoDatas(_ photos: [Photo]) {
-
+        
         // データ取得URL作成
         let urlPhotos = baseURL.appendingPathComponent("photos")
         // データ取得域
-        var getPhotos: [GetPhoto] = []
+        var getPhotos: [GetPlantPhoto] = []
         
         Task {
             do {
                 // Photoデータをサーバから取得
                 let (photoData, _) = try await URLSession.shared.data(from: urlPhotos)
-                getPhotos = try JSONDecoder().decode([GetPhoto].self, from: photoData)
-                                
+                getPhotos = try JSONDecoder().decode([GetPlantPhoto].self, from: photoData)
+                
                 // 取得データを元にループして、写真データに設定
                 for getPhoto in getPhotos {
                     if let setData = photos.filter { $0.id == getPhoto.plant?.id ?? ""}.first {
                         // 植物個体情報を設定
                         setData.title = getPhoto.plant?.title ?? ""
                         setData.comment = getPhoto.plant?.comment ?? ""
+                        setData.setCategoryBy(strCategory: getPhoto.plant?.category ?? "")
                         // 植物情報を設定
                         if let plantInfo = getPhoto.plantInfo {
                             setData.aliasName = plantInfo.aliasName
@@ -184,6 +177,7 @@ class PhotoGet :ObservableObject {
                             setData.family = plantInfo.family
                             setData.features = plantInfo.features
                             setData.info = plantInfo.info
+                            setData.setBloomSeasonBy(strSeansons: plantInfo.bloomSeasons ?? "")
                         }
                     }
                 }
@@ -194,115 +188,52 @@ class PhotoGet :ObservableObject {
     }
     
     
-    /// IDを指定して、写真データを取得します
-    /// - Parameter id: データを示すID
-    /// - Returns:  IDに紐づく写真データが存在する場合は写真データを返す
-    func getPhotoDataByDB(ID id: String) async -> Photo? {
+    /// タイトルを指定して、植物の一般情報を取得する
+    /// - Parameter id: タイトル
+    /// - Returns: 植物（一般情報）
+    func getPlantInfo(title id: String) async -> GetPlantInfo? {
         
-        // Photoアプリから取得
-        let photo = photos.filter({$0.id == id}).first
+        // データ取得URL作成
+        let urlPlantInfo = baseURL.appendingPathComponent("plantInfo").appendingPathComponent(id)
         
-        if (photo != nil) {
-            let url = baseURL.appendingPathComponent("plants").appendingPathComponent(id)
-            do {
-                let (data, _) = try await URLSession.shared.data(from: url)
-                let dto = try JSONDecoder().decode(GetPlant.self, from: data)
-                let cDate = getCreatedAt(from: dto.createdAt)
-                
-                photo!.title = dto.self.title
-
-            } catch {
-                // DBからデータを取得できないケース
-                print("Failed to fetch photo by id: \(error)")
-                return nil
-            }
-        }
-        
-        return photo
-    }
-    
-    
-    /// 日付を文字列から取得
-    /// - Parameter dateString: 日付を表す文字列
-    /// - Returns: 文字列が示す日付
-    func getCreatedAt(from dateString: String) -> Date? {
-        
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let cdate = formatter.date(from: dateString)
-        
-        return cdate
-    }
-    
-    /// 写真データを更新します
-    /// - Parameter id: 更新キー
-    /// - Parameter photo: 更新データ
-    func updatePhoto(ID id: String, data photo: Photo) {
-        
-        let url = baseURL.appendingPathComponent("photo").appendingPathComponent(id)
-        
-        // 日付取得
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        var dateString:String = ""
-        if let cDate = photo.creationDate {
-            dateString = formatter.string(from: cDate)
-        }
-            
-        // 更新データ作成
-        let updatePlant = UpdatePlant(id: photo.id, createdAt: dateString, title: photo.title, comment: photo.comment, category:nil)
-        var updatePlantInfo: UpdatePlantInfo? = nil
-        if let photoTitle = updatePlant.title {
-            updatePlantInfo = UpdatePlantInfo(id: photoTitle, aliasName: photo.aliasName, kanjiName: photo.kanjiName, url: photo.url, wiki: photo.wiki, family: photo.family, bloomSeansons: nil, features: photo.features, info: photo.info)
-        }
-        let updatePhoto = UpdatePhoto(updatePlant: updatePlant, updatePlantInfo: updatePlantInfo)
-               
         do {
-            var request = URLRequest(url: url)
-            request.httpMethod = "PUT"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            // PhotoInfoデータをサーバから取得
+            let (photoData, _) = try await URLSession.shared.data(from: urlPlantInfo)
+            var getPlantInfo = try JSONDecoder().decode(GetPlantInfo.self, from: photoData)
             
-            let jsonData = try JSONEncoder().encode(updatePhoto)
-            request.httpBody = jsonData
-            
-            Task {
-                let (data, response) = try await URLSession.shared.data(for: request)
-                //try validate(response: response)
-
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .iso8601
-                _ = try decoder.decode(GetPhoto.self, from: data)
-            }
-            
-        }
-        catch {
-            print("Error posting data: \(error)")
+            return getPlantInfo
+        } catch {
+            print("error:\(error)")
+            return nil
         }
     }
     
-    /// 写真データを登録します
+    /// 写真データを登録/更新します
     /// - Parameter photo: 写真データ
-    func insertPhoto(data photo: Photo) {
-        
+    func updatePhoto(data photo: Photo) {
         // タイトル未設定の場合はスルー
         guard photo.title != nil else {
             print("Not set title")
             return
         }
-
-        // 日付取得
+        let photoTitle = photo.title!
+        
+        // 登録日付を文字列として取得
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         var dateString:String = ""
         if let cDate = photo.creationDate {
             dateString = formatter.string(from: cDate)
         }
-            
+        
         // 登録データ作成
-        let updatePlantInfo = UpdatePlantInfo(id: photo.title!, aliasName: photo.aliasName, kanjiName: photo.kanjiName, url: photo.url, wiki: photo.wiki, family: photo.family, bloomSeansons: nil, features: photo.features, info: photo.info)
-        let updatePlant = UpdatePlant(id: photo.id, createdAt: dateString, title: photo.title, comment: photo.comment, category: nil)
-        let updatePhoto = UpdatePhoto(updatePlant: updatePlant, updatePlantInfo: updatePlantInfo)
-
+        let updatePlant = UpdatePlant(id: photo.id, createdAt: dateString, title: photoTitle, comment: photo.comment,
+                                      category: photo.plantCategoryNames)
+        let updatePlantInfo = UpdatePlantInfo(id: photoTitle, aliasName: photo.aliasName, kanjiName: photo.kanjiName,
+                                              url: photo.url, wiki: photo.wiki, family: photo.family,
+                                              bloomSeansons: photo.bloomSeasonNames, features: photo.features, info: photo.info)
+        let updatePhoto = UpdatePlantPhoto(updatePlant: updatePlant, updatePlantInfo: updatePlantInfo)
+        
         // DB登録
         let url = baseURL.appendingPathComponent("photo")
         do {
@@ -314,19 +245,32 @@ class PhotoGet :ObservableObject {
             request.httpBody = jsonData
             
             Task {
-                let (data, response) = try await URLSession.shared.data(for: request)
+                let (data, _) = try await URLSession.shared.data(for: request)
                 //try validate(response: response)
-
+                
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
-                _ = try decoder.decode(GetPhoto.self, from: data)
+                let updatedPhoto = try decoder.decode(UpdatePlantPhoto.self, from: data)
+                print("UpdatedPhoto: \(updatedPhoto)")
             }
             
         }
         catch {
             print("Error posting data: \(error)")
         }
-
+        
+    }
+    
+    /// 日付を文字列から取得
+    /// - Parameter dateString: 日付を表す文字列
+    /// - Returns: 文字列が示す日付
+    func getCreatedAt(from dateString: String) -> Date? {
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let cdate = formatter.date(from: dateString)
+        
+        return cdate
     }
 }
 

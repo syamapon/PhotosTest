@@ -65,11 +65,21 @@ class Photo: Identifiable, Hashable {
     /// 科
     var family: String?
 
-    /// 四季
+    /// 開花季節
     var bloomSeasons: [BloomSeason] = BloomSeason.GetFourSeasons()
+    
+    /// 開花季節をカンマ区切りの文字列で取得
+    var bloomSeasonNames: String {
+        return bloomSeasons.filter({$0.isOn}).map({$0.season.name}).joined(separator: ",")
+    }
     
     /// 所属カテゴリー
     var plantCategory: [PlantCategory] = PlantCategory.PlantCategories()
+    
+    /// 所属カテゴリーのリストをカンマ区切りの文字列で取得する
+    var plantCategoryNames: String {
+        return plantCategory.filter({$0.isBelong}).map({$0.category.name}).joined(separator: ",")
+    }
     
     /// 特徴
     var features: String?
@@ -89,6 +99,8 @@ class Photo: Identifiable, Hashable {
         
         return formatter.string(from: creationDate)
     }
+    
+
     
     /// 撮影座標を取得
     var position: MapCameraPosition? {
@@ -133,6 +145,35 @@ class Photo: Identifiable, Hashable {
         }
         return dir.appendingPathComponent("plants.sqlite")
     }
+    
+    /// カンマ区切りの文字列を受け取り、開花時期を設定する
+    /// - Parameter seansons: 開花時期を表す文字列
+    func setBloomSeasonBy(strSeansons seansons: String) {
+        
+        if seansons.isEmpty { return }
+        
+        let _seasons: [String] = seansons.components(separatedBy: ",")
+        self.bloomSeasons.indices.forEach { i in
+            if _seasons.contains(self.bloomSeasons[i].season.name) {
+                self.bloomSeasons[i].isOn = true
+            }
+        }
+    }
+    
+    /// カンマ区切りの文字列を受け取り、植物のカテゴリーを設定する
+    /// - Parameter categories:  カテゴリーを表す文字列
+    func setCategoryBy(strCategory categories: String) {
+        
+        if categories.isEmpty { return }
+        
+        let _categories: [String] = categories.components(separatedBy: ",")
+        self.plantCategory.indices.forEach { i in
+            if _categories.contains(self.plantCategory[i].category.name) {
+                self.plantCategory[i].isBelong = true
+            }
+        }
+    }
+    
     
     func isBelong(_ category: PlantCategory.Category) -> Bool {
         

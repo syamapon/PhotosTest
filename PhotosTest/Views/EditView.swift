@@ -66,6 +66,20 @@ struct EditView: View {
                             print("kana input2.")
                             
                             
+                            Task {
+                                var getPlantInfo = await photoGet.getPlantInfo(title: self.inputName)
+                                if let gPinf = getPlantInfo {
+                                    self.kanjiName = gPinf.kanjiName ?? ""
+                                    self.aliasName = gPinf.aliasName ?? ""
+                                    //self.bloomSeasons = gPinf.bloomSeansons
+                                    self.features = gPinf.features ?? ""
+                                    self.info = gPinf.info ?? ""
+                                    
+                                    
+                                }
+                                
+                            }
+
                             
                             /*
                             var getPhoto: Photo = Photo(setImage: nil)
@@ -162,21 +176,10 @@ struct EditView: View {
                     photo.plantCategory = plantCategory
                     photo.wiki = wikiPedia
                     photo.family = family
-                                        
+                        
+                    // DB登録
                     do {
-                        //try photo.storeData()
-                        photoGet.insertPhoto(data: photo)
-                        /*
-                        Task {
-                            let _setPhoto = await photoGet.getPhotoDataByDB(ID: photo.id)
-                            if (_setPhoto != nil) {
-                                photoGet.updatePhoto(ID: photo.id, data: photo)
-                            }
-                            else {
-
-                            }
-                        }
-                         */
+                        photoGet.updatePhoto(data: photo)
                     }
                     catch {
                         print("Error saving photo: \(error.localizedDescription)")
