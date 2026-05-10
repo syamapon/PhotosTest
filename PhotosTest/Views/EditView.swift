@@ -22,7 +22,7 @@ struct EditView: View {
     /// タイトル入力
     @State private var inputName: String = ""
     @FocusState private var isInputNameFocused: Bool
-        
+    
     /// 別名入力
     @State private var aliasName: String = ""
     
@@ -37,13 +37,12 @@ struct EditView: View {
     
     /// WIKIPEDIA URL
     @State private var wikiPedia: String = ""
-        
+    
     /// 説明入力
     @State private var comment: String = ""
     
     /// 特徴入力
     @State private var features: String = ""
-    
     
     /// 情報入力
     @State private var info: String = ""
@@ -71,38 +70,26 @@ struct EditView: View {
                                 if let gPinf = getPlantInfo {
                                     self.kanjiName = gPinf.kanjiName ?? ""
                                     self.aliasName = gPinf.aliasName ?? ""
+                                    if let bSeanson = gPinf.bloomSeasons {
+                                        var _seansons = bSeanson.split(separator: ",").map{String($0)}
+                                        self.bloomSeasons.indices.forEach { i in
+                                            if _seansons.contains(self.bloomSeasons[i].season.name) {
+                                                self.bloomSeasons[i].isOn = true
+                                            }
+                                        }
+                                    }
+                                    
                                     //self.bloomSeasons = gPinf.bloomSeansons
+                                    self.inputUrl = gPinf.url ?? ""
+                                    self.wikiPedia = gPinf.wiki ?? ""
                                     self.features = gPinf.features ?? ""
                                     self.info = gPinf.info ?? ""
-                                    
-                                    
+                                    self.family = gPinf.family ?? ""
                                 }
                                 
                             }
-
                             
-                            /*
-                            var getPhoto: Photo = Photo(setImage: nil)
-                            getPhoto.title = self.inputName
-                                                        
-                            do {
-                                // 設定済みの項目を転記
-                                try getPhoto.setData()
-                                kanjiName = getPhoto.kanjiName ?? ""
-                                inputUrl = getPhoto.url ?? ""
-                                aliasName = getPhoto.aliasName ?? ""
-                                bloomSeasons = getPhoto.bloomSeasons
-                                features = getPhoto.features ?? ""
-                                info = getPhoto.info ?? ""
-                                wikiPedia = getPhoto.wiki ?? ""
-                                family = getPhoto.family ?? ""
-                                
-                                
-                            } catch {
-                                print("Error. setData")
-                            }
-                             */
-                         }
+                        }
                     }
                 TextField("名前（漢字）", text: $kanjiName, prompt: Text("名前（漢字）を入力してください"))
                 TextField("別名", text: $aliasName, prompt: Text("別名を入力してください"))
@@ -133,29 +120,9 @@ struct EditView: View {
                 
             }.padding(5)
             Section {
-                Text("特徴（見分けるポイント）")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                TextEditor(text: $features)
-                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
-                    .textEditorStyle(.plain)
-                    .border(Color.gray)
-                
-                Text("情報（この植物一般に関する情報）")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                TextEditor(text: $info)
-                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
-                    .textEditorStyle(.plain)
-                    .border(Color.gray)
-                
-                Text("コメント（この個体の情報）")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                TextEditor(text: $comment)
-                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
-                    .textEditorStyle(.plain)
-                    .border(Color.gray)
+                InputTextEdit(itemTitle: "特徴（見分けるポイント）", itemValue: $features)
+                InputTextEdit(itemTitle: "情報（この植物一般に関する情報）", itemValue: $info)
+                InputTextEdit(itemTitle: "コメント（この個体の情報）", itemValue: $comment)
             }
         }
         .toolbar {
@@ -176,7 +143,7 @@ struct EditView: View {
                     photo.plantCategory = plantCategory
                     photo.wiki = wikiPedia
                     photo.family = family
-                        
+                    
                     // DB登録
                     do {
                         photoGet.updatePhoto(data: photo)
@@ -198,6 +165,7 @@ struct EditView: View {
             if let photo = self.selectPhoto {
                 inputName = photo.title ?? ""
                 inputUrl = photo.url ?? ""
+                wikiPedia = photo.wiki ?? ""
                 aliasName = photo.aliasName ?? ""
                 kanjiName = photo.kanjiName ?? ""
                 features = photo.features ?? ""
@@ -220,13 +188,33 @@ struct EditView: View {
     }
 }
 
+/// 複数行の入力項目
+struct InputTextEdit: View {
+    
+    /// 項目タイトル
+    let itemTitle: String
+    
+    /// 項目値
+    @Binding var itemValue: String
+    
+    var body: some View {
+        Text(itemTitle)
+            .font(.headline)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        TextEditor(text: $itemValue)
+            .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading)
+            .textEditorStyle(.plain)
+            .border(Color.gray)
+    }
+}
+
 #Preview {
     /*
-    EditView(
-        /// 写真データ取得
-        photoGet: .constant(nil),
-        selectPhoto: .constant(nil),
-        isShowUpdateDlg: .constant(true)
-    )
+     EditView(
+     /// 写真データ取得
+     photoGet: .constant(nil),
+     selectPhoto: .constant(nil),
+     isShowUpdateDlg: .constant(true)
+     )
      */
 }

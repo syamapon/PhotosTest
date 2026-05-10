@@ -36,8 +36,14 @@ struct ContentView: View {
                     HStack {
                         PhotoThumbnail(asset: entry.asset, size: .init(width: 50, height: 50))
                         VStack {
-                            Text("\(entry.title ?? "")")
-                                .frame(maxWidth: .infinity, alignment: .init(horizontal: .leading, vertical: .top))
+                            HStack {
+                                Text("\(entry.title ?? "")")
+                                    .frame(maxWidth: .infinity, alignment: .init(horizontal: .leading, vertical: .top))
+                                if entry.isBelong(PlantCategory.Category.tree) {
+                                    Image(systemName: "tree.fill")
+                                }
+                                
+                            }
                             Text(" \(entry.photoDt) 撮影")
                                 .frame(maxWidth: .infinity, alignment: .init(horizontal: .leading, vertical: .top))
                         }

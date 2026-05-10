@@ -31,7 +31,7 @@ class PhotoGet :ObservableObject {
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
             switch status {
             case .authorized, .limited:
-                
+                          
                 // アルバム(花・木・植物）を取得
                 let fetchOptions = PHFetchOptions()
                 fetchOptions.predicate = NSPredicate(format: "title IN %@", ["植物"])
@@ -141,7 +141,7 @@ class PhotoGet :ObservableObject {
         let url: String?
         let wiki: String?
         let family: String?
-        let bloomSeansons: String?
+        let bloomSeasons: String?
         let features: String?
         let info: String?
     }
@@ -231,7 +231,7 @@ class PhotoGet :ObservableObject {
                                       category: photo.plantCategoryNames)
         let updatePlantInfo = UpdatePlantInfo(id: photoTitle, aliasName: photo.aliasName, kanjiName: photo.kanjiName,
                                               url: photo.url, wiki: photo.wiki, family: photo.family,
-                                              bloomSeansons: photo.bloomSeasonNames, features: photo.features, info: photo.info)
+                                              bloomSeasons: photo.bloomSeasonNames, features: photo.features, info: photo.info)
         let updatePhoto = UpdatePlantPhoto(updatePlant: updatePlant, updatePlantInfo: updatePlantInfo)
         
         // DB登録
