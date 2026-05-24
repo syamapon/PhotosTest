@@ -25,6 +25,11 @@ struct DetailView: View {
     
     @State private var doubleClickPoint: CGPoint = .zero
     
+    /// １行項目高さ
+    private let HEIGHT_NORMAL: CGFloat = 12
+    
+    /// 複数行項目高さ
+    private let HEIGHT_LONG: CGFloat = 60
     
     /// body
     var body: some View {
@@ -37,84 +42,55 @@ struct DetailView: View {
                     DetailImageView(selectPhoto: _selectPhoto)
                     VStack(alignment: .leading, spacing: 0) {
                         Grid {
-                            DetailTextGridRow(itemNm: "名前（かな）", itemVal: _selectPhoto.title, widthNm: 100)
-                            DetailTextGridRow(itemNm: "名前（漢字）", itemVal: _selectPhoto.kanjiName, widthNm: 100)
-                            DetailTextGridRow(itemNm: "別名", itemVal: _selectPhoto.aliasName, widthNm: 100)
-                            DetailTextGridRow(itemNm: "撮影日", itemVal: _selectPhoto.photoDt, widthNm: 100)
-                            DetailTextGridRow(itemNm: "科", itemVal: _selectPhoto.family, widthNm: 100)
-  
-                            GridRow {
-                                Text("サイト")
-                                    .frame(width:100, alignment:.leading)
+                            DetailTextGridRow(itemNm: "名前（かな）", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(_selectPhoto.title ?? "") }
+                            DetailTextGridRow(itemNm: "名前（漢字）", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(_selectPhoto.kanjiName ?? "") }
+                            DetailTextGridRow(itemNm: "別名", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(_selectPhoto.aliasName ?? "") }
+                            DetailTextGridRow(itemNm: "撮影日", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(_selectPhoto.photoDt) }
+                            DetailTextGridRow(itemNm: "科", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(_selectPhoto.family ?? "") }
+                            DetailTextGridRow(itemNm: "名前（漢字）", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(_selectPhoto.kanjiName ?? "") }
+                            DetailTextGridRow(itemNm: "サイト", widthNm: 100, heightNm: HEIGHT_NORMAL) {
                                 if let url = _selectPhoto.url {
                                     if (!url.isEmpty) {
                                         Link("URL", destination: URL(string:url)!)
-                                            .frame(maxWidth: .infinity, alignment:.leading)
-                                            .padding(2)
                                     }
                                     else {
                                         Text("未設定")
-                                            .frame(maxWidth: .infinity, alignment:.leading)
                                     }
                                 }
                                 else {
-                                    Text("未設定").frame(maxWidth: .infinity, alignment:.leading)
+                                    Text("未設定")
                                 }
                             }
-                            GridRow {
-                                Text("WIKI")
-                                    .frame(width:100, alignment:.leading)
+                            DetailTextGridRow(itemNm: "WIKI", widthNm: 100, heightNm: HEIGHT_NORMAL) {
                                 if let wiki = _selectPhoto.wiki {
                                     if (!wiki.isEmpty) {
                                         Link("wikipedia", destination: URL(string:wiki)!)
-                                            .frame(maxWidth: .infinity, alignment:.leading)
-                                            .padding(2)
                                     }
                                     else {
                                         Text("未設定")
-                                            .frame(maxWidth: .infinity, alignment:.leading)
                                     }
                                 }
                                 else {
-                                    Text("未設定").frame(maxWidth: .infinity, alignment:.leading)
+                                    Text("未設定")
                                 }
                             }
-                            GridRow {
-                                Text("開花季節")
-                                    .frame(width:100, alignment:.leading)
+                            DetailTextGridRow(itemNm: "開花季節", widthNm: 100, heightNm: HEIGHT_NORMAL) {
                                 HStack {
                                     ForEach(_selectPhoto.bloomSeasons) {
                                         season in if (season.isOn) {Text(season.season.name)}
                                     }
-                                }.frame(maxWidth: .infinity, alignment:.leading)
+                                }
                             }
-                            GridRow {
-                                Text("種別")
-                                    .frame(width:100, alignment:.leading)
+                            DetailTextGridRow(itemNm: "種別", widthNm: 100, heightNm: HEIGHT_NORMAL) {
                                 HStack {
                                     ForEach(_selectPhoto.plantCategory) {
                                         category in if (category.isBelong) {Text(category.category.name)}
                                     }
-                                }.frame(maxWidth: .infinity, alignment:.leading)
+                                }
                             }
-                            GridRow {
-                                Text("特徴")
-                                    .frame(width:100, height:50, alignment:.leading)
-                                Text("\(_selectPhoto.features ?? "")")
-                                    .frame(maxWidth: .infinity, alignment:.leading)
-                            }
-                            GridRow {
-                                Text("情報")
-                                    .frame(width:100, height:50, alignment:.leading)
-                                Text("\(_selectPhoto.info ?? "")")
-                                    .frame(maxWidth: .infinity, alignment:.leading)
-                            }
-                            GridRow {
-                                Text("コメント")
-                                    .frame(width:100, height:50, alignment:.leading)
-                                Text("\(_selectPhoto.comment ?? "")")
-                                    .frame(maxWidth: .infinity, alignment:.leading)
-                            }
+                            DetailTextGridRow(itemNm: "特徴", widthNm: 100, heightNm: HEIGHT_LONG) { Text(_selectPhoto.features ?? "") }
+                            DetailTextGridRow(itemNm: "情報", widthNm: 100, heightNm: HEIGHT_LONG) { Text(_selectPhoto.info ?? "") }
+                            DetailTextGridRow(itemNm: "コメント", widthNm: 100, heightNm: HEIGHT_LONG) { Text(_selectPhoto.comment ?? "") }
                         }.frame(maxWidth: .infinity, alignment: .topLeading)
                             .padding(2)
                             .border(Color.white, width: 1)
@@ -138,9 +114,7 @@ struct DetailView: View {
                                         }
                                     }
                             }.frame(maxWidth: .infinity, alignment:.trailing)
-                            .padding(10)
-                            .border(Color.yellow, width: 1)
-                        
+                     
                         Spacer()
                         
                         if (sameNamePhotos.count > 0) {
@@ -163,7 +137,6 @@ struct DetailView: View {
                             print("onAppear")
                         }
                         .frame(maxHeight: .infinity, alignment:.init(horizontal: .leading, vertical: .top))
-                        .border(Color.red, width: 1)
                 }
                 Spacer()
                 Map(position: $cameraPosition) {
