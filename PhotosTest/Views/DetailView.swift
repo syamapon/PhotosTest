@@ -30,65 +30,19 @@ struct DetailView: View {
     var body: some View {
         
         VStack {
-           
             if let _selectPhoto = self.selectPhoto {
-                
+                                
                 HStack {
-                    if let getNsImage = getImage(asset: _selectPhoto.asset) {
-                        ScrollViewReader { proxy in
-                            
-                            ScrollView([.horizontal, .vertical]) {
-                                ZStack {
-                                    Color.red.frame(width:1, height: 1
-                                    ).id("anchor")
-                                        .position(x: doubleClickPoint.x, y: doubleClickPoint.y)
-                                    ZoomableImage(image: getNsImage, initImageSize: CGSize(width: 392, height: 550),
-                                                  lastDoubleTapPoint: $doubleClickPoint)
-                                    .draggable(getNsImage)
-                                }
-                            }
-                            .frame(width: 392, height: 550)
-                            .onChange(of: doubleClickPoint) { _, newPoint in
-                                // ダブルクリック位置が更新されたら、その近辺へスクロール
-                                withAnimation {
-                                    print("newPoint:\(newPoint.x),\(newPoint.y)")
-                                    proxy.scrollTo("anchor", anchor: .center)
-                                }
-                            }
-                        }
-                    }
+                    // 画像表示
+                    DetailImageView(selectPhoto: _selectPhoto)
                     VStack(alignment: .leading, spacing: 0) {
                         Grid {
-                            GridRow {
-                                Text("名前（かな）")
-                                    .frame(width:100, alignment:.leading)
-                                Text("\(_selectPhoto.title ?? "")")
-                                    .frame(maxWidth: .infinity, alignment:.leading)
-                            }
-                            GridRow {
-                                Text("名前（漢字）")
-                                    .frame(width:100, alignment:.leading)
-                                Text("\(_selectPhoto.kanjiName ?? "")")
-                                    .frame(maxWidth: .infinity, alignment:.leading)
-                            }
-                            GridRow {
-                                Text("別名")
-                                    .frame(width:100, alignment:.leading)
-                                Text("\(_selectPhoto.aliasName ?? "")")
-                                    .frame(maxWidth: .infinity, alignment:.leading)
-                            }
-                            GridRow {
-                                Text("撮影日")
-                                    .frame(width:100, alignment:.leading)
-                                Text("\(_selectPhoto.photoDt)")
-                                    .frame(maxWidth: .infinity, alignment:.leading)
-                            }
-                            GridRow {
-                                Text("科")
-                                    .frame(width:100, alignment:.leading)
-                                Text("\(_selectPhoto.family ?? "")")
-                                    .frame(maxWidth: .infinity, alignment:.leading)
-                            }
+                            DetailTextGridRow(itemNm: "名前（かな）", itemVal: _selectPhoto.title, widthNm: 100)
+                            DetailTextGridRow(itemNm: "名前（漢字）", itemVal: _selectPhoto.kanjiName, widthNm: 100)
+                            DetailTextGridRow(itemNm: "別名", itemVal: _selectPhoto.aliasName, widthNm: 100)
+                            DetailTextGridRow(itemNm: "撮影日", itemVal: _selectPhoto.photoDt, widthNm: 100)
+                            DetailTextGridRow(itemNm: "科", itemVal: _selectPhoto.family, widthNm: 100)
+  
                             GridRow {
                                 Text("サイト")
                                     .frame(width:100, alignment:.leading)
@@ -161,36 +115,33 @@ struct DetailView: View {
                                 Text("\(_selectPhoto.comment ?? "")")
                                     .frame(maxWidth: .infinity, alignment:.leading)
                             }
-                            /*
-                            GridRow {
-                                Text("クリック位置")
-                                Text("\(doubleClickPoint.x), \(doubleClickPoint.y)")
-                            }
-                             */
                         }.frame(maxWidth: .infinity, alignment: .topLeading)
-                         .padding(2)
-                        Divider().gridCellUnsizedAxes(.horizontal)
+                            .padding(2)
+                            .border(Color.white, width: 1)
+                        //Divider().gridCellUnsizedAxes(.horizontal)
                         
                         Button("編集") { isShowUpdateDlg.toggle()}
-                                .sheet(isPresented: $isShowUpdateDlg, onDismiss: {}) {
-                                    EditView(
-                                        photoGet: photoGet,
-                                        selectPhoto: $selectPhoto,
-                                        isShowUpdateDlg: $isShowUpdateDlg).onDisappear {
-                                            print("disAppear")
-                                            for photo in sameNamePhotos {
-                                                photo.kanjiName = selectPhoto?.kanjiName
-                                                photo.url = selectPhoto?.url
-                                                photo.aliasName = selectPhoto?.aliasName
-                                                photo.bloomSeasons = selectPhoto?.bloomSeasons ?? []
-                                                photo.wiki = selectPhoto?.wiki ?? ""
-                                                photo.info = selectPhoto?.info ?? ""
-                                                photo.features = selectPhoto?.features ?? ""
-                                                
-                                            }
+                            .sheet(isPresented: $isShowUpdateDlg, onDismiss: {}) {
+                                EditView(
+                                    photoGet: photoGet,
+                                    selectPhoto: $selectPhoto,
+                                    isShowUpdateDlg: $isShowUpdateDlg).onDisappear {
+                                        print("disAppear")
+                                        for photo in sameNamePhotos {
+                                            photo.kanjiName = selectPhoto?.kanjiName
+                                            photo.url = selectPhoto?.url
+                                            photo.aliasName = selectPhoto?.aliasName
+                                            photo.bloomSeasons = selectPhoto?.bloomSeasons ?? []
+                                            photo.wiki = selectPhoto?.wiki ?? ""
+                                            photo.info = selectPhoto?.info ?? ""
+                                            photo.features = selectPhoto?.features ?? ""
+                                        }
                                     }
                             }.frame(maxWidth: .infinity, alignment:.trailing)
                             .padding(10)
+                            .border(Color.yellow, width: 1)
+                        
+                        Spacer()
                         
                         if (sameNamePhotos.count > 0) {
                             Text("同名の写真").frame(maxWidth: .infinity, alignment:.leading)
@@ -198,19 +149,23 @@ struct DetailView: View {
                                 HStack {
                                     ForEach (sameNamePhotos) {
                                         _photo in
-                                            PhotoThumbnail(asset: _photo.asset, size: .init(width: 100, height: 100))
-                                                .onTapGesture {
-                                                    selectPhoto = _photo
-                                                }
+                                        PhotoThumbnail(asset: _photo.asset, size: .init(width: 100, height: 100))
+                                            .onTapGesture {
+                                                selectPhoto = _photo
+                                            }
                                     }
                                 }
                             }
                         }
-                    }.frame(maxWidth: .infinity, alignment:.init(horizontal: .leading, vertical: .top))
+                    }.frame(maxWidth: .infinity,
+                            alignment:.init(horizontal: .leading, vertical: .top))
                         .onAppear {
                             print("onAppear")
                         }
+                        .frame(maxHeight: .infinity, alignment:.init(horizontal: .leading, vertical: .top))
+                        .border(Color.red, width: 1)
                 }
+                Spacer()
                 Map(position: $cameraPosition) {
                     if let photo = selectPhoto {
                         let coordinate = CLLocationCoordinate2D(latitude: photo.locLatitude ?? 0.0, longitude: photo.locLongitude ?? 0.0)
@@ -223,7 +178,7 @@ struct DetailView: View {
                     MapScaleView()
                 })
             }
-
+            
         }
         .onChange(of: selectPhoto, initial: true, { _, newValue in
             cameraPosition = newValue?.position ?? .automatic
@@ -232,7 +187,7 @@ struct DetailView: View {
     
     /// 同名の写真リストを取得
     private var sameNamePhotos: [Photo] {
-       
+        
         // 選択されていない、選択された写真に名前が無い場合
         guard selectPhoto != nil
                 && selectPhoto!.title != nil
@@ -244,7 +199,7 @@ struct DetailView: View {
         photos = photos.filter {photo in
             photo.id != selectPhoto!.id
             && photo.title == selectPhoto!.title
-        }        
+        }
         // 重複除去
         var alreadyAdded: Set<Photo> = []
         let uniquePhotos = photos.filter { alreadyAdded.insert($0).inserted}
@@ -264,7 +219,7 @@ struct DetailView: View {
             options.resizeMode = .exact
             options.isNetworkAccessAllowed = true
             options.isSynchronous = true
-                  
+            
             // イメージデータの取得
             var getImage: NSImage?
             PHImageManager.default().requestImage(
@@ -283,6 +238,7 @@ struct DetailView: View {
 }
 
 #Preview {
-    //DetailView(photoGet: PhotoGet(), selectPhoto: .constant(nil))
+    DetailView(photoGet: PhotoGet(), selectPhoto: .constant(nil))
+    
 }
 
