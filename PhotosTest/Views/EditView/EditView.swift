@@ -120,9 +120,16 @@ struct EditView: View {
                 
             }.padding(5)
             Section {
-                InputTextEdit(itemTitle: "特徴（見分けるポイント）", itemValue: $features)
-                InputTextEdit(itemTitle: "情報（この植物一般に関する情報）", itemValue: $info)
-                InputTextEdit(itemTitle: "コメント（この個体の情報）", itemValue: $comment)
+                EditInputMulti(itemTitle: "特徴（見分けるポイント）", itemValue: $features)
+                    .padding(.trailing, 10)
+                EditInputMulti(itemTitle: "情報（この植物一般に関する情報）", itemValue: $info)
+                    .padding(.trailing, 10)
+                EditInputMulti(itemTitle: "コメント（この個体の情報）", itemValue: $comment)
+                    .padding(.trailing, 10)
+                
+                //InputTextEdit(itemTitle: "特徴（見分けるポイント）", itemValue: $features)
+                //InputTextEdit(itemTitle: "情報（この植物一般に関する情報）", itemValue: $info)
+                //InputTextEdit(itemTitle: "コメント（この個体の情報）", itemValue: $comment)
             }
         }
         .toolbar {
@@ -210,11 +217,23 @@ struct InputTextEdit: View {
 
 #Preview {
     /*
-     EditView(
-     /// 写真データ取得
-     photoGet: .constant(nil),
-     selectPhoto: .constant(nil),
-     isShowUpdateDlg: .constant(true)
-     )
+    struct Demo: View {
+        
+        private var photoGet = PhotoGet()
+        
+        @State private var showUpDlg = false
+        
+        var body: some View {
+            EditView(photoGet: photoGet,
+                     selectPhoto: .constant(nil),
+                     isShowUpdateDlg: $showUpDlg)
+            .frame(width: 700, height: 800)
+        }
+    }
+    return Demo()
      */
+    EditView(photoGet: PhotoGet(),
+             selectPhoto: .constant(nil),
+             isShowUpdateDlg: .constant(false))
+    .frame(width: 700, height: 800)
 }

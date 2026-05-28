@@ -11,34 +11,38 @@ import Photos
 struct DetailImageView: View {
     
     /// 選択中の写真データ
-    let selectPhoto : Photo
+    let selectPhoto : Photo?
     
     @State private var doubleClickPoint: CGPoint = .zero
     
     var body: some View {
-        if let getNsImage = getImage(asset: selectPhoto.asset) {
-            ScrollViewReader { proxy in
-                
-                ScrollView([.horizontal, .vertical]) {
-                    ZStack {
-                        Color.red.frame(width:1, height: 1
-                        ).id("anchor")
-                            .position(x: doubleClickPoint.x, y: doubleClickPoint.y)
-                        ZoomableImage(image: getNsImage, initImageSize: CGSize(width: 392, height: 550),
-                                      lastDoubleTapPoint: $doubleClickPoint)
-                        .draggable(getNsImage)
+        if let _selectPhoto = selectPhoto {
+            if let getNsImage = getImage(asset: _selectPhoto.asset) {
+                ScrollViewReader { proxy in
+                    
+                    ScrollView([.horizontal, .vertical]) {
+                        ZStack {
+                            Color.red.frame(width:1, height: 1
+                            ).id("anchor")
+                                .position(x: doubleClickPoint.x, y: doubleClickPoint.y)
+                            ZoomableImage(image: getNsImage, initImageSize: CGSize(width: 392, height: 550),
+                                          lastDoubleTapPoint: $doubleClickPoint)
+                            .draggable(getNsImage)
+                        }
                     }
-                }
-                .frame(width: 392, height: 550)
-                .onChange(of: doubleClickPoint) { _, newPoint in
-                    // ダブルクリック位置が更新されたら、その近辺へスクロール
-                    withAnimation {
-                        print("newPoint:\(newPoint.x),\(newPoint.y)")
-                        proxy.scrollTo("anchor", anchor: .center)
+                    .frame(width: 392, height: 550)
+                    .onChange(of: doubleClickPoint) { _, newPoint in
+                        // ダブルクリック位置が更新されたら、その近辺へスクロール
+                        withAnimation {
+                            print("newPoint:\(newPoint.x),\(newPoint.y)")
+                            proxy.scrollTo("anchor", anchor: .center)
+                        }
                     }
                 }
             }
         }
+        
+
     }
     
     /// イメージオブジェクト取得

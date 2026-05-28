@@ -35,123 +35,122 @@ struct DetailView: View {
     var body: some View {
         
         VStack {
-            if let _selectPhoto = self.selectPhoto {
-                                
-                HStack {
-                    // 画像表示
-                    DetailImageView(selectPhoto: _selectPhoto)
-                    VStack(alignment: .leading, spacing: 0) {
-                        Grid {
-                            DetailTextGridRow(itemNm: "名前（かな）", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(_selectPhoto.title ?? "") }
-                            DetailTextGridRow(itemNm: "名前（漢字）", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(_selectPhoto.kanjiName ?? "") }
-                            DetailTextGridRow(itemNm: "別名", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(_selectPhoto.aliasName ?? "") }
-                            DetailTextGridRow(itemNm: "撮影日", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(_selectPhoto.photoDt) }
-                            DetailTextGridRow(itemNm: "科", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(_selectPhoto.family ?? "") }
-                            DetailTextGridRow(itemNm: "名前（漢字）", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(_selectPhoto.kanjiName ?? "") }
-                            DetailTextGridRow(itemNm: "サイト", widthNm: 100, heightNm: HEIGHT_NORMAL) {
-                                if let url = _selectPhoto.url {
-                                    if (!url.isEmpty) {
-                                        Link("URL", destination: URL(string:url)!)
-                                    }
-                                    else {
-                                        Text("未設定")
-                                    }
+            HStack {
+                // 画像表示
+                DetailImageView(selectPhoto: self.selectPhoto)
+                VStack(alignment: .leading, spacing: 0) {
+                    Grid {
+                        DetailTextGridRow(itemNm: "名前（かな）", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(self.selectPhoto?.title ?? "") }
+                        DetailTextGridRow(itemNm: "名前（漢字）", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(self.selectPhoto?.kanjiName ?? "") }
+                        DetailTextGridRow(itemNm: "別名", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(self.selectPhoto?.aliasName ?? "") }
+                        DetailTextGridRow(itemNm: "撮影日", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(self.selectPhoto?.photoDt ?? "") }
+                        DetailTextGridRow(itemNm: "科", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(self.selectPhoto?.family ?? "") }
+                        DetailTextGridRow(itemNm: "サイト", widthNm: 100, heightNm: HEIGHT_NORMAL) {
+                            if let url = self.selectPhoto?.url {
+                                if (!url.isEmpty) {
+                                    Link("URL", destination: URL(string:url)!)
                                 }
                                 else {
                                     Text("未設定")
                                 }
                             }
-                            DetailTextGridRow(itemNm: "WIKI", widthNm: 100, heightNm: HEIGHT_NORMAL) {
-                                if let wiki = _selectPhoto.wiki {
-                                    if (!wiki.isEmpty) {
-                                        Link("wikipedia", destination: URL(string:wiki)!)
-                                    }
-                                    else {
-                                        Text("未設定")
-                                    }
+                            else {
+                                Text("未設定")
+                            }
+                        }
+                        DetailTextGridRow(itemNm: "WIKI", widthNm: 100, heightNm: HEIGHT_NORMAL) {
+                            if let wiki = self.selectPhoto?.wiki {
+                                if (!wiki.isEmpty) {
+                                    Link("wikipedia", destination: URL(string:wiki)!)
                                 }
                                 else {
                                     Text("未設定")
                                 }
                             }
-                            DetailTextGridRow(itemNm: "開花季節", widthNm: 100, heightNm: HEIGHT_NORMAL) {
-                                HStack {
-                                    ForEach(_selectPhoto.bloomSeasons) {
+                            else {
+                                Text("未設定")
+                            }
+                        }
+                        DetailTextGridRow(itemNm: "開花季節", widthNm: 100, heightNm: HEIGHT_NORMAL) {
+                            HStack {
+                                if let _bloomSeasons = self.selectPhoto?.bloomSeasons {
+                                    ForEach(_bloomSeasons) {
                                         season in if (season.isOn) {Text(season.season.name)}
                                     }
                                 }
                             }
-                            DetailTextGridRow(itemNm: "種別", widthNm: 100, heightNm: HEIGHT_NORMAL) {
-                                HStack {
-                                    ForEach(_selectPhoto.plantCategory) {
+                        }
+                        DetailTextGridRow(itemNm: "種別", widthNm: 100, heightNm: HEIGHT_NORMAL) {
+                            HStack {
+                                if let _plantCategory = self.selectPhoto?.plantCategory {
+                                    ForEach(_plantCategory) {
                                         category in if (category.isBelong) {Text(category.category.name)}
                                     }
                                 }
                             }
-                            DetailTextGridRow(itemNm: "特徴", widthNm: 100, heightNm: HEIGHT_LONG) { Text(_selectPhoto.features ?? "") }
-                            DetailTextGridRow(itemNm: "情報", widthNm: 100, heightNm: HEIGHT_LONG) { Text(_selectPhoto.info ?? "") }
-                            DetailTextGridRow(itemNm: "コメント", widthNm: 100, heightNm: HEIGHT_LONG) { Text(_selectPhoto.comment ?? "") }
-                        }.frame(maxWidth: .infinity, alignment: .topLeading)
-                            .padding(2)
-                            .border(Color.white, width: 1)
-                        //Divider().gridCellUnsizedAxes(.horizontal)
-                        
-                        Button("編集") { isShowUpdateDlg.toggle()}
-                            .sheet(isPresented: $isShowUpdateDlg, onDismiss: {}) {
-                                EditView(
-                                    photoGet: photoGet,
-                                    selectPhoto: $selectPhoto,
-                                    isShowUpdateDlg: $isShowUpdateDlg).onDisappear {
-                                        print("disAppear")
-                                        for photo in sameNamePhotos {
-                                            photo.kanjiName = selectPhoto?.kanjiName
-                                            photo.url = selectPhoto?.url
-                                            photo.aliasName = selectPhoto?.aliasName
-                                            photo.bloomSeasons = selectPhoto?.bloomSeasons ?? []
-                                            photo.wiki = selectPhoto?.wiki ?? ""
-                                            photo.info = selectPhoto?.info ?? ""
-                                            photo.features = selectPhoto?.features ?? ""
+                        }
+                        DetailTextGridRow(itemNm: "特徴", widthNm: 100, heightNm: HEIGHT_LONG) { Text(self.selectPhoto?.features ?? "") }
+                        DetailTextGridRow(itemNm: "情報", widthNm: 100, heightNm: HEIGHT_LONG) { Text(self.selectPhoto?.info ?? "") }
+                        DetailTextGridRow(itemNm: "コメント", widthNm: 100, heightNm: HEIGHT_LONG) { Text(self.selectPhoto?.comment ?? "") }
+                    }.frame(maxWidth: .infinity, alignment: .topLeading)
+                        .padding(2)
+                    //.border(Color.white, width: 1)
+                    //Divider().gridCellUnsizedAxes(.horizontal)
+                    
+                    Button("編集") { isShowUpdateDlg.toggle()}
+                        .sheet(isPresented: $isShowUpdateDlg, onDismiss: {}) {
+                            EditView(
+                                photoGet: photoGet,
+                                selectPhoto: $selectPhoto,
+                                isShowUpdateDlg: $isShowUpdateDlg).onDisappear {
+                                    print("disAppear")
+                                    for photo in sameNamePhotos {
+                                        photo.kanjiName = selectPhoto?.kanjiName
+                                        photo.url = selectPhoto?.url
+                                        photo.aliasName = selectPhoto?.aliasName
+                                        photo.bloomSeasons = selectPhoto?.bloomSeasons ?? []
+                                        photo.wiki = selectPhoto?.wiki ?? ""
+                                        photo.info = selectPhoto?.info ?? ""
+                                        photo.features = selectPhoto?.features ?? ""
+                                    }
+                                }.frame(width: 700, height: 800)
+                        }.frame(maxWidth: .infinity, alignment:.trailing)
+                    
+                    Spacer()
+                    
+                    if (sameNamePhotos.count > 0) {
+                        Text("同名の写真").frame(maxWidth: .infinity, alignment:.leading)
+                        ScrollView(.horizontal) {
+                            HStack {
+                                ForEach (sameNamePhotos) {
+                                    _photo in
+                                    PhotoThumbnail(asset: _photo.asset, size: .init(width: 100, height: 100))
+                                        .onTapGesture {
+                                            selectPhoto = _photo
                                         }
-                                    }
-                            }.frame(maxWidth: .infinity, alignment:.trailing)
-                     
-                        Spacer()
-                        
-                        if (sameNamePhotos.count > 0) {
-                            Text("同名の写真").frame(maxWidth: .infinity, alignment:.leading)
-                            ScrollView(.horizontal) {
-                                HStack {
-                                    ForEach (sameNamePhotos) {
-                                        _photo in
-                                        PhotoThumbnail(asset: _photo.asset, size: .init(width: 100, height: 100))
-                                            .onTapGesture {
-                                                selectPhoto = _photo
-                                            }
-                                    }
                                 }
                             }
                         }
-                    }.frame(maxWidth: .infinity,
-                            alignment:.init(horizontal: .leading, vertical: .top))
-                        .onAppear {
-                            print("onAppear")
-                        }
-                        .frame(maxHeight: .infinity, alignment:.init(horizontal: .leading, vertical: .top))
-                }
-                Spacer()
-                Map(position: $cameraPosition) {
-                    if let photo = selectPhoto {
-                        let coordinate = CLLocationCoordinate2D(latitude: photo.locLatitude ?? 0.0, longitude: photo.locLongitude ?? 0.0)
-                        Marker(photo.title ?? "", coordinate: coordinate)
                     }
+                }.frame(maxWidth: .infinity,
+                        alignment:.init(horizontal: .leading, vertical: .top))
+                .onAppear {
+                    print("onAppear")
                 }
-                .mapControls({
-                    MapZoomStepper()
-                    MapCompass()
-                    MapScaleView()
-                })
+                .frame(maxHeight: .infinity, alignment:.init(horizontal: .leading, vertical: .top))
             }
-            
+            Spacer()
+            Map(position: $cameraPosition) {
+                if let photo = selectPhoto {
+                    let coordinate = CLLocationCoordinate2D(latitude: photo.locLatitude ?? 0.0, longitude: photo.locLongitude ?? 0.0)
+                    Marker(photo.title ?? "", coordinate: coordinate)
+                }
+            }
+            .mapControls({
+                MapZoomStepper()
+                MapCompass()
+                MapScaleView()
+            })
         }
         .onChange(of: selectPhoto, initial: true, { _, newValue in
             cameraPosition = newValue?.position ?? .automatic
@@ -211,7 +210,7 @@ struct DetailView: View {
 }
 
 #Preview {
+
     DetailView(photoGet: PhotoGet(), selectPhoto: .constant(nil))
-    
 }
 
