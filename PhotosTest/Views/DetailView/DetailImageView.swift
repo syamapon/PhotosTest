@@ -18,8 +18,7 @@ struct DetailImageView: View {
     var body: some View {
         if let _selectPhoto = selectPhoto {
             if let getNsImage = getImage(asset: _selectPhoto.asset) {
-                ScrollViewReader { proxy in
-                    
+                ScrollViewReader { proxy in                    
                     ScrollView([.horizontal, .vertical]) {
                         ZStack {
                             Color.red.frame(width:1, height: 1
@@ -41,8 +40,6 @@ struct DetailImageView: View {
                 }
             }
         }
-        
-
     }
     
     /// イメージオブジェクト取得
@@ -75,5 +72,5 @@ struct DetailImageView: View {
 }
 
 #Preview {
-    //DetailImageView()
+    DetailImageView(selectPhoto: nil)
 }

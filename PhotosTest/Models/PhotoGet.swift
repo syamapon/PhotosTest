@@ -31,7 +31,7 @@ class PhotoGet :ObservableObject {
         PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
             switch status {
             case .authorized, .limited:
-                          
+                
                 // アルバム(花・木・植物）を取得
                 let fetchOptions = PHFetchOptions()
                 fetchOptions.predicate = NSPredicate(format: "title IN %@", ["植物"])
@@ -199,7 +199,7 @@ class PhotoGet :ObservableObject {
         do {
             // PhotoInfoデータをサーバから取得
             let (photoData, _) = try await URLSession.shared.data(from: urlPlantInfo)
-            var getPlantInfo = try JSONDecoder().decode(GetPlantInfo.self, from: photoData)
+            let getPlantInfo = try JSONDecoder().decode(GetPlantInfo.self, from: photoData)
             
             return getPlantInfo
         } catch {
@@ -210,7 +210,7 @@ class PhotoGet :ObservableObject {
     
     /// 写真データを登録/更新します
     /// - Parameter photo: 写真データ
-    func updatePhoto(data photo: Photo) {
+    func updatePhoto(data photo: Photo) throws {
         // タイトル未設定の場合はスルー
         guard photo.title != nil else {
             print("Not set title")
@@ -236,29 +236,21 @@ class PhotoGet :ObservableObject {
         
         // DB登録
         let url = baseURL.appendingPathComponent("photo")
-        do {
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            
-            let jsonData = try JSONEncoder().encode(updatePhoto)
-            request.httpBody = jsonData
-            
-            Task {
-                let (data, _) = try await URLSession.shared.data(for: request)
-                //try validate(response: response)
-                
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .iso8601
-                let updatedPhoto = try decoder.decode(UpdatePlantPhoto.self, from: data)
-                print("UpdatedPhoto: \(updatedPhoto)")
-            }
-            
-        }
-        catch {
-            print("Error posting data: \(error)")
-        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
+        let jsonData = try JSONEncoder().encode(updatePhoto)
+        request.httpBody = jsonData
+        
+        Task {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            let updatedPhoto = try decoder.decode(UpdatePlantPhoto.self, from: data)
+            print("UpdatedPhoto: \(updatedPhoto)")
+        }
     }
     
     /// 日付を文字列から取得

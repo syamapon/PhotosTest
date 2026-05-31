@@ -16,8 +16,8 @@ struct EditView: View {
     
     @Binding var selectPhoto: Photo?
     
+    /// 本ダイアログの表示フラグ
     @Binding var isShowUpdateDlg: Bool
-    
     
     /// タイトル入力
     @State private var inputName: String = ""
@@ -56,22 +56,19 @@ struct EditView: View {
     var body: some View {
         Form {
             Section() {
-                TextField("名前（カナ）", text: $inputName, prompt: Text("名前（カナ）を入力してください")).padding(5)
+                TextField("名前（カナ）", text: $inputName, prompt: Text("名前（カナ）を入力してください"))
+                    .padding(5)
                     .focused($isInputNameFocused)
-                    .onChange(of: isInputNameFocused) { focused in
-                        if focused == false {
+                    .onChange(of: isInputNameFocused) { oldValue, newValue in
+                        if newValue == false {
                             // フォーカスが外れたタイミングで行いたい処理
-                            //validateName()
-                            print("kana input2.")
-                            
-                            
                             Task {
-                                var getPlantInfo = await photoGet.getPlantInfo(title: self.inputName)
+                                let getPlantInfo = await photoGet.getPlantInfo(title: self.inputName)
                                 if let gPinf = getPlantInfo {
                                     self.kanjiName = gPinf.kanjiName ?? ""
                                     self.aliasName = gPinf.aliasName ?? ""
                                     if let bSeanson = gPinf.bloomSeasons {
-                                        var _seansons = bSeanson.split(separator: ",").map{String($0)}
+                                        let _seansons = bSeanson.split(separator: ",").map { String($0) }
                                         self.bloomSeasons.indices.forEach { i in
                                             if _seansons.contains(self.bloomSeasons[i].season.name) {
                                                 self.bloomSeasons[i].isOn = true
@@ -86,12 +83,10 @@ struct EditView: View {
                                     self.info = gPinf.info ?? ""
                                     self.family = gPinf.family ?? ""
                                 }
-                                
                             }
-                            
                         }
                     }
-                TextField("名前（漢字）", text: $kanjiName, prompt: Text("名前（漢字）を入力してください"))
+                TextField("名前（漢字）", text: $kanjiName, prompt:Text("名前（漢字）を入力してください"))
                 TextField("別名", text: $aliasName, prompt: Text("別名を入力してください"))
                 TextField("URL", text: $inputUrl, prompt: Text("URLを入力してください"))
                 TextField("wikipedia", text: $wikiPedia, prompt: Text("WikiPedia URLを入力してください"))
@@ -126,10 +121,6 @@ struct EditView: View {
                     .padding(.trailing, 10)
                 EditInputMulti(itemTitle: "コメント（この個体の情報）", itemValue: $comment)
                     .padding(.trailing, 10)
-                
-                //InputTextEdit(itemTitle: "特徴（見分けるポイント）", itemValue: $features)
-                //InputTextEdit(itemTitle: "情報（この植物一般に関する情報）", itemValue: $info)
-                //InputTextEdit(itemTitle: "コメント（この個体の情報）", itemValue: $comment)
             }
         }
         .toolbar {
@@ -153,7 +144,7 @@ struct EditView: View {
                     
                     // DB登録
                     do {
-                        photoGet.updatePhoto(data: photo)
+                        try photoGet.updatePhoto(data: photo)
                     }
                     catch {
                         print("Error saving photo: \(error.localizedDescription)")
@@ -161,6 +152,7 @@ struct EditView: View {
                     
                     isShowUpdateDlg = false
                 }, label: {Text("保存")})
+                .disabled(inputName.isEmpty)
             })
             
             ToolbarItem(placement: .cancellationAction, content: {
@@ -216,24 +208,9 @@ struct InputTextEdit: View {
 }
 
 #Preview {
-    /*
-    struct Demo: View {
-        
-        private var photoGet = PhotoGet()
-        
-        @State private var showUpDlg = false
-        
-        var body: some View {
-            EditView(photoGet: photoGet,
-                     selectPhoto: .constant(nil),
-                     isShowUpdateDlg: $showUpDlg)
-            .frame(width: 700, height: 800)
-        }
-    }
-    return Demo()
-     */
     EditView(photoGet: PhotoGet(),
              selectPhoto: .constant(nil),
              isShowUpdateDlg: .constant(false))
     .frame(width: 700, height: 800)
 }
+
