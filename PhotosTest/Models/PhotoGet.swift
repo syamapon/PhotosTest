@@ -9,6 +9,9 @@ import SwiftUI
 import Combine
 import Photos
 
+
+
+
 /// 写真アクセスを行う
 class PhotoGet :ObservableObject {
     
@@ -17,7 +20,7 @@ class PhotoGet :ObservableObject {
     
     
     /// データ取得URL
-    private let baseURL = URL(string: "http://192.168.3.5:8080")!
+    private let baseURL = URL(string: "http://192.168.3.6:8080")!
     
     /// イニシャライザ
     init()
@@ -213,8 +216,10 @@ class PhotoGet :ObservableObject {
     func updatePhoto(data photo: Photo) throws {
         // タイトル未設定の場合はスルー
         guard photo.title != nil else {
-            print("Not set title")
-            return
+            throw PhotoGetError.invalidData(msg: "タイトルが入力されていません")
+        }
+        guard photo.title!.range(of: "^[ァ-ヶー　]+$", options: .regularExpression) != nil else {
+            throw PhotoGetError.invalidData(msg: "タイトルはカナ文字を入力してください")
         }
         let photoTitle = photo.title!
         
@@ -264,6 +269,12 @@ class PhotoGet :ObservableObject {
         
         return cdate
     }
+}
+
+enum PhotoGetError: Error {
+    case invalidURL
+    case invalidData(msg: String)
+    case invalidResponse
 }
 
 

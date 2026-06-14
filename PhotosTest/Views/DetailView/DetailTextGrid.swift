@@ -11,6 +11,9 @@ struct DetailTextGrid: View {
     
     /// 選択中の写真データ
     let selectPhoto : Photo?
+        
+    /// 項目名列の幅
+    private let WIDTH_NAME: CGFloat = 100
     
     /// １行項目高さ
     private let HEIGHT_NORMAL: CGFloat = 12
@@ -20,16 +23,16 @@ struct DetailTextGrid: View {
     
     var body: some View {
         Grid {
-            DetailTextGridRow(itemNm: "名前（かな）", widthNm: 100, heightNm: HEIGHT_NORMAL) {
+            DetailTextGridRow(itemNm: "名前（かな）", widthNm: WIDTH_NAME, heightNm: HEIGHT_NORMAL) {
                 Text(self.selectPhoto?.title ?? "") }
-            DetailTextGridRow(itemNm: "名前（漢字）", widthNm: 100, heightNm: HEIGHT_NORMAL) { Text(self.selectPhoto?.kanjiName ?? "") }
-            DetailTextGridRow(itemNm: "別名", widthNm: 100, heightNm: HEIGHT_NORMAL) {
+            DetailTextGridRow(itemNm: "名前（漢字）", widthNm: WIDTH_NAME, heightNm: HEIGHT_NORMAL) { Text(self.selectPhoto?.kanjiName ?? "") }
+            DetailTextGridRow(itemNm: "別名", widthNm: WIDTH_NAME, heightNm: HEIGHT_NORMAL) {
                 Text(self.selectPhoto?.aliasName ?? "") }
-            DetailTextGridRow(itemNm: "撮影日", widthNm: 100, heightNm: HEIGHT_NORMAL) {
+            DetailTextGridRow(itemNm: "撮影日", widthNm: WIDTH_NAME, heightNm: HEIGHT_NORMAL) {
                 Text(self.selectPhoto?.photoDt ?? "") }
-            DetailTextGridRow(itemNm: "科", widthNm: 100, heightNm: HEIGHT_NORMAL) {
+            DetailTextGridRow(itemNm: "科", widthNm: WIDTH_NAME, heightNm: HEIGHT_NORMAL) {
                 Text(self.selectPhoto?.family ?? "") }
-            DetailTextGridRow(itemNm: "サイト", widthNm: 100, heightNm: HEIGHT_NORMAL) {
+            DetailTextGridRow(itemNm: "サイト", widthNm: WIDTH_NAME, heightNm: HEIGHT_NORMAL) {
                 if let url = self.selectPhoto?.url {
                     if (!url.isEmpty) {
                         Link("URL", destination: URL(string:url)!)
@@ -42,7 +45,7 @@ struct DetailTextGrid: View {
                     Text("未設定")
                 }
             }
-            DetailTextGridRow(itemNm: "WIKI", widthNm: 100, heightNm: HEIGHT_NORMAL) {
+            DetailTextGridRow(itemNm: "WIKI", widthNm: WIDTH_NAME, heightNm: HEIGHT_NORMAL) {
                 if let wiki = self.selectPhoto?.wiki {
                     if (!wiki.isEmpty) {
                         Link("wikipedia", destination: URL(string:wiki)!)
@@ -55,7 +58,7 @@ struct DetailTextGrid: View {
                     Text("未設定")
                 }
             }
-            DetailTextGridRow(itemNm: "開花季節", widthNm: 100, heightNm: HEIGHT_NORMAL) {
+            DetailTextGridRow(itemNm: "開花季節", widthNm: WIDTH_NAME, heightNm: HEIGHT_NORMAL) {
                 HStack {
                     if let _bloomSeasons = self.selectPhoto?.bloomSeasons {
                         ForEach(_bloomSeasons) {
@@ -64,7 +67,7 @@ struct DetailTextGrid: View {
                     }
                 }
             }
-            DetailTextGridRow(itemNm: "種別", widthNm: 100, heightNm: HEIGHT_NORMAL) {
+            DetailTextGridRow(itemNm: "種別", widthNm: WIDTH_NAME, heightNm: HEIGHT_NORMAL) {
                 HStack {
                     if let _plantCategory = self.selectPhoto?.plantCategory {
                         ForEach(_plantCategory) {
@@ -73,11 +76,11 @@ struct DetailTextGrid: View {
                     }
                 }
             }
-            DetailTextGridRow(itemNm: "特徴", widthNm: 100, heightNm: HEIGHT_LONG) {
+            DetailTextGridRow(itemNm: "特徴", widthNm: WIDTH_NAME, heightNm: HEIGHT_LONG) {
                 Text(self.selectPhoto?.features ?? "") }
-            DetailTextGridRow(itemNm: "情報", widthNm: 100, heightNm: HEIGHT_LONG) {
+            DetailTextGridRow(itemNm: "情報", widthNm: WIDTH_NAME, heightNm: HEIGHT_LONG) {
                 Text(self.selectPhoto?.info ?? "") }
-            DetailTextGridRow(itemNm: "コメント", widthNm: 100, heightNm: HEIGHT_LONG) {
+            DetailTextGridRow(itemNm: "コメント", widthNm: WIDTH_NAME, heightNm: HEIGHT_LONG) {
                 Text(self.selectPhoto?.comment ?? "") }
         }
     }

@@ -145,12 +145,21 @@ struct EditView: View {
                     // DB登録
                     do {
                         try photoGet.updatePhoto(data: photo)
+                        isShowUpdateDlg = false
+                    }
+                    catch let error as PhotoGetError {
+                        switch error {
+                        case .invalidData(let msg):
+                            print("\(msg)")
+                        default:
+                            print("\(error)")
+                        }
                     }
                     catch {
                         print("Error saving photo: \(error.localizedDescription)")
+                        isShowUpdateDlg = true
                     }
-                    
-                    isShowUpdateDlg = false
+
                 }, label: {Text("保存")})
                 .disabled(inputName.isEmpty)
             })
